@@ -1,0 +1,29 @@
+body {
+  font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+}
+
+h1 {
+  font-family: Fraunces, Georgia, serif;
+}
+
+.wheel-canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.animate-on-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 1px rgb(0 0 0 / 35%);
+}
+
+.animate-on-hover {
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+
+.scale-on-hover:hover {
+  transform: scale(1.02);
+}
+
+.scale-on-hover {
+  transition: transform 160ms ease;
+}

@@ -1,0 +1,15 @@
+minimumReleaseAge: 0
+shamefullyHoist: true
+strictPeerDependencies: false
+
+packages:
+  - .
+
+allowBuilds:
+  '@parcel/watcher': false
+  canvas: false
+  esbuild: false
+  sharp: false
+  unrs-resolver: false
+  vue-demi: false
+  workerd: false
