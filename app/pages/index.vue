@@ -61,7 +61,7 @@ onMounted(async () => {
 
     flvPlayer = FlvJs.createPlayer(
       { type: "flv", url: SITE.flvURL, isLive: true },
-      { enableWorker: false, lazyLoad: false, seekType: "range" }
+      { enableWorker: false, lazyLoad: false, seekType: "range", headers: { "X-Tunnel": "true" } }
     );
 
     flvPlayer.attachMediaElement(video);
