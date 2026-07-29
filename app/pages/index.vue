@@ -51,7 +51,7 @@ const kickChatEmbed = `https://kick.com/popout/${SITE.platforms.kick.user}/chat`
             class="w-full h-full"
             :src="chatToggle === 'twitch' ? twitchChatEmbed : kickChatEmbed"
             frameborder="0"
-            sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-modals"
+            sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-modals allow-forms"
             :spellcheck="false"
           />
         </Pane>
