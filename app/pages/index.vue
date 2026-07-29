@@ -37,10 +37,9 @@ const scheduleReconnect = (delay = 5000) => {
 
 const getAppendedOffset = (_eventName: string, { frag }: any) => {
   if (frag.type === "main" && frag.sn !== "initSegment" && frag.elementaryStreams.video) {
-    const { start, startDTS, startPTS, maxStartPTS, elementaryStreams } = frag;
+    const { start, elementaryStreams } = frag;
     tOffset.value = elementaryStreams.video.startPTS - start;
     hlsPlayer.value?.off?.($hls.Events.BUFFER_APPENDED, getAppendedOffset);
-    console.log("video timestamp offset:", tOffset.value, { start, startDTS, startPTS, maxStartPTS, elementaryStreams });
   }
 };
 
@@ -53,7 +52,11 @@ const startPlayer = () => {
   destroyPlayer();
 
   try {
-    hlsPlayer.value = new $hls();
+    hlsPlayer.value = new $hls({
+      xhrSetup: (xhr: XMLHttpRequest) => {
+        xhr.setRequestHeader("X-Tunnel", "true");
+      }
+    });
     hlsPlayer.value.loadSource(SITE.hlsURL);
     hlsPlayer.value.attachMedia(playerRef.value);
     hlsPlayer.value.startLoad();
