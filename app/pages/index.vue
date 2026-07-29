@@ -3,79 +3,9 @@ import { Pane, Splitpanes } from "splitpanes";
 import { useMediaQuery } from "@vueuse/core";
 
 const isMobile = useMediaQuery("(max-width: 576px)");
-const playerRef = ref<HTMLMediaElement | null>(null);
-
-const { $hls } = useNuxtApp();
-
-// ...existing code...
-const hlsPlayer = ref<InstanceType<typeof $hls> | null>(null);
-const reconnectTimer = ref<ReturnType<typeof setTimeout> | null>(null);
-const tOffset = ref(0);
-
-const destroyPlayer = () => {
-  if (hlsPlayer.value) {
-    hlsPlayer.value.destroy();
-    hlsPlayer.value = null;
-  }
-};
-
-const clearReconnect = () => {
-  if (reconnectTimer.value) {
-    clearTimeout(reconnectTimer.value);
-    reconnectTimer.value = null;
-  }
-};
-
-const scheduleReconnect = (delay = 5000) => {
-  if (reconnectTimer.value) return;
-
-  reconnectTimer.value = setTimeout(() => {
-    reconnectTimer.value = null;
-    startPlayer();
-  }, delay);
-};
-
-const getAppendedOffset = (_eventName: string, { frag }: any) => {
-  if (frag.type === "main" && frag.sn !== "initSegment" && frag.elementaryStreams.video) {
-    const { start, elementaryStreams } = frag;
-    tOffset.value = elementaryStreams.video.startPTS - start;
-    hlsPlayer.value?.off?.($hls.Events.BUFFER_APPENDED, getAppendedOffset);
-  }
-};
-
-const startPlayer = () => {
-  if (!playerRef.value) {
-    scheduleReconnect();
-    return;
-  }
-
-  destroyPlayer();
-
-  try {
-    hlsPlayer.value = new $hls({
-      xhrSetup: (xhr: XMLHttpRequest) => {
-        xhr.setRequestHeader("X-Tunnel", "true");
-      }
-    });
-    hlsPlayer.value.loadSource(SITE.hlsURL);
-    hlsPlayer.value.attachMedia(playerRef.value);
-    hlsPlayer.value.startLoad();
-    hlsPlayer.value.on($hls.Events.BUFFER_APPENDED, getAppendedOffset);
-  }
-  catch (error) {
-    console.info("Error creando player:", error);
-    destroyPlayer();
-    scheduleReconnect();
-  }
-};
-
-onMounted(() => {
-  startPlayer();
-});
 
 onUnmounted(() => {
-  clearReconnect();
-  destroyPlayer();
+
 });
 </script>
 
@@ -86,14 +16,7 @@ onUnmounted(() => {
         <Pane :size="isMobile ? 35 : 80" :min-size="isMobile ? 35 : 40">
           <div class="flex h-full items-center justify-center bg-black flex-col">
             <div class="aspect-video w-full">
-              <video
-                ref="playerRef"
-                class="w-full h-full"
-                controls
-                autoplay
-                playsinline
-                muted
-              />
+              <VideoPlayer :src="SITE.hlsURL" muted autoplay />
             </div>
             <div v-if="!isMobile" class="p-2 bg-neutral-900/70 text-white w-full">
               <ButtonSubscribe />

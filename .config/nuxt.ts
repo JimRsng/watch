@@ -12,7 +12,8 @@ export default defineNuxtConfig({
     "@nuxtjs/sitemap",
     "@nuxthub/core",
     "@nuxt/fonts",
-    "nuxt-ui-colors-no-inline"
+    "nuxt-ui-colors-no-inline",
+    "@vue-player/nuxt"
   ],
 
   $production: {
