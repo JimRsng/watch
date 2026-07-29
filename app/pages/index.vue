@@ -21,7 +21,7 @@ const onPlay = () => {
 };
 
 const twitchChatEmbed = `https://www.twitch.tv/embed/${SITE.platforms.twitch.user}/chat?parent=${SITE.parent}&darkpopout=true`;
-const kickChatEmbed = `https://kick.com/popout/${SITE.platforms.kick.user}/chat`;
+const kickChatEmbed = `https://chat.kick.cx/embed/${SITE.platforms.kick.user}`;
 </script>
 
 <template>
@@ -51,7 +51,7 @@ const kickChatEmbed = `https://kick.com/popout/${SITE.platforms.kick.user}/chat`
             class="w-full h-full"
             :src="chatToggle === 'twitch' ? twitchChatEmbed : kickChatEmbed"
             frameborder="0"
-            sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-modals allow-forms"
+            sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-forms allow-popups"
             :spellcheck="false"
           />
         </Pane>
