@@ -55,6 +55,7 @@
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.120",
     "@iconify-json/ph": "^1.2.2",
+    "@iconify-json/simple-icons": "^1.2.92",
     "@nuxt/eslint": "^1.16.0",
     "@vue-player/nuxt": "^0.1.6",
     "eslint": "^10.8.0",

@@ -2,6 +2,7 @@
 import { Pane, Splitpanes } from "splitpanes";
 import { useMediaQuery, useWindowSize } from "@vueuse/core";
 
+const chatToggle = ref<"twitch" | "kick">("kick");
 const isMobile = useMediaQuery("(max-width: 576px)");
 const { width, height } = useWindowSize();
 
@@ -18,6 +19,9 @@ const onPlay = () => {
   if (!player) return;
   player.currentTime = player.duration;
 };
+
+const twitchChatEmbed = `https://www.twitch.tv/embed/${SITE.platforms.twitch.user}/chat?parent=${SITE.parent}&darkpopout=true`;
+const kickChatEmbed = `https://kick.com/popout/${SITE.platforms.kick.user}/chat`;
 </script>
 
 <template>
@@ -29,8 +33,14 @@ const onPlay = () => {
             <div class="aspect-video w-full">
               <VideoPlayer id="player" :src="SITE.hlsURL" muted autoplay @play="onPlay" />
             </div>
-            <div v-if="!isMobile" class="p-2 bg-neutral-900/70 text-white w-full">
-              <ButtonSubscribe />
+            <div v-if="!isMobile" class="flex justify-end w-full gap-2">
+              <!-- Chat Toggler -->
+              <div class="p-2 bg-neutral-900/70 text-white flex items-center justify-center gap-1">
+                Chat:
+                <Icon name="simple-icons:kick" />
+                <USwitch :ui="{ base: 'data-[state=unchecked]:bg-lime-400' }" @click="chatToggle = chatToggle === 'twitch' ? 'kick' : 'twitch'" />
+                <Icon name="simple-icons:twitch" />
+              </div>
             </div>
           </div>
         </Pane>
@@ -39,7 +49,7 @@ const onPlay = () => {
             id="chat"
             allow="autoplay"
             class="w-full h-full"
-            :src="`https://www.twitch.tv/embed/${SITE.platforms.twitch.user}/chat?parent=${SITE.parent}&darkpopout=true`"
+            :src="chatToggle === 'twitch' ? twitchChatEmbed : kickChatEmbed"
             frameborder="0"
             sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-modals"
             :spellcheck="false"
@@ -47,9 +57,6 @@ const onPlay = () => {
         </Pane>
       </Splitpanes>
     </ClientOnly>
-    <div v-if="isMobile" class="p-2 bg-neutral-950/70 text-white w-full">
-      <ButtonSubscribe />
-    </div>
   </div>
 </template>
 
