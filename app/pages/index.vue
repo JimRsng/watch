@@ -2,7 +2,7 @@
 import { Pane, Splitpanes } from "splitpanes";
 import { useMediaQuery } from "@vueuse/core";
 
-const isMobile = useMediaQuery("(max-width: 976px)");
+const isMobile = useMediaQuery("(max-width: 576px)");
 const playerRef = ref<HTMLVideoElement | null>(null);
 
 const { $flvjs } = useNuxtApp();
@@ -90,7 +90,7 @@ onUnmounted(() => {
 <template>
   <div class="h-screen bg-black">
     <Splitpanes class="h-full default-theme" :horizontal="isMobile">
-      <Pane :size="80" :min-size="40">
+      <Pane :size="isMobile ? 35 : 80" :min-size="isMobile ? 35 : 40">
         <div class="flex h-full items-center justify-center bg-black flex-col">
           <div class="aspect-video w-full">
             <video
@@ -102,12 +102,12 @@ onUnmounted(() => {
               muted
             />
           </div>
-          <div class="p-2 bg-neutral-900/70 text-white w-full">
-            <UButton :to="`https://www.twitch.tv/products/${SITE.platforms.twitch.user}`" target="_blank" label="Suscribirse" />
+          <div v-if="!isMobile" class="p-2 bg-neutral-900/70 text-white w-full">
+            <ButtonSubscribe />
           </div>
         </div>
       </Pane>
-      <Pane :size="18" :min-size="18">
+      <Pane :size="isMobile ? 65 : 18" :min-size="isMobile ? 65 : 18">
         <iframe
           id="chat"
           allow="autoplay"
@@ -119,6 +119,9 @@ onUnmounted(() => {
         />
       </Pane>
     </Splitpanes>
+    <div v-if="isMobile" class="p-2 bg-neutral-950/70 text-white w-full">
+      <ButtonSubscribe />
+    </div>
   </div>
 </template>
 
