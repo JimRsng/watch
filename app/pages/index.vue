@@ -54,4 +54,7 @@ const onPlay = () => {
     background-color: #8d5d5d;
   }
 }
+.default-theme.splitpanes .splitpanes__pane {
+  background: unset;
+}
 </style>
