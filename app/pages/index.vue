@@ -24,7 +24,7 @@ const clearReconnect = () => {
   }
 };
 
-const scheduleReconnect = (delay = 3000) => {
+const scheduleReconnect = (delay = 5000) => {
   if (reconnectTimer.value) return;
 
   reconnectTimer.value = setTimeout(() => {
