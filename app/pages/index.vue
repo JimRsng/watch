@@ -7,35 +7,34 @@ const playerRef = ref<HTMLVideoElement | null>(null);
 
 const { $flvjs } = useNuxtApp();
 
-let flvPlayer: ReturnType<typeof $flvjs.createPlayer> | null = null;
-let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
-let isUnmounted = false;
+const flvPlayer = ref<ReturnType<typeof $flvjs.createPlayer> | null>(null);
+const reconnectTimer = ref<ReturnType<typeof setTimeout> | null>(null);
 
 const destroyPlayer = () => {
-  if (flvPlayer) {
-    flvPlayer.destroy();
-    flvPlayer = null;
+  if (flvPlayer.value) {
+    flvPlayer.value.destroy();
+    flvPlayer.value = null;
   }
 };
 
 const clearReconnect = () => {
-  if (reconnectTimer) {
-    clearTimeout(reconnectTimer);
-    reconnectTimer = null;
+  if (reconnectTimer.value) {
+    clearTimeout(reconnectTimer.value);
+    reconnectTimer.value = null;
   }
 };
 
 const scheduleReconnect = (delay = 3000) => {
-  if (isUnmounted || reconnectTimer) return;
+  if (reconnectTimer.value) return;
 
-  reconnectTimer = setTimeout(() => {
-    reconnectTimer = null;
+  reconnectTimer.value = setTimeout(() => {
+    reconnectTimer.value = null;
     startPlayer();
   }, delay);
 };
 
 const startPlayer = () => {
-  if (isUnmounted || !playerRef.value) {
+  if (!playerRef.value) {
     scheduleReconnect();
     return;
   }
@@ -44,7 +43,7 @@ const startPlayer = () => {
   destroyPlayer();
 
   try {
-    flvPlayer = $flvjs.createPlayer(
+    flvPlayer.value = $flvjs.createPlayer(
       {
         type: "flv",
         url: SITE.flvURL,
@@ -58,12 +57,12 @@ const startPlayer = () => {
       }
     );
 
-    flvPlayer.attachMediaElement(playerRef.value);
-    flvPlayer.load();
+    flvPlayer.value.attachMediaElement(playerRef.value);
+    flvPlayer.value.load();
 
-    flvPlayer.play();
+    flvPlayer.value.play();
 
-    flvPlayer.on($flvjs.Events.ERROR, (error) => {
+    flvPlayer.value.on($flvjs.Events.ERROR, (error) => {
       console.info("FLV error:", error);
       destroyPlayer();
       scheduleReconnect();
@@ -81,7 +80,6 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  isUnmounted = true;
   clearReconnect();
   destroyPlayer();
 });
