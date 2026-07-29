@@ -4,9 +4,11 @@ import { useMediaQuery } from "@vueuse/core";
 
 const isMobile = useMediaQuery("(max-width: 576px)");
 
-onUnmounted(() => {
-
-});
+const onPlay = () => {
+  const player = document.querySelector("#player video") as HTMLVideoElement;
+  if (!player) return;
+  player.currentTime = player.duration;
+};
 </script>
 
 <template>
@@ -16,7 +18,7 @@ onUnmounted(() => {
         <Pane :size="isMobile ? 35 : 80" :min-size="isMobile ? 35 : 40">
           <div class="flex h-full items-center justify-center bg-black flex-col">
             <div class="aspect-video w-full">
-              <VideoPlayer :src="SITE.hlsURL" muted autoplay />
+              <VideoPlayer id="player" :src="SITE.hlsURL" muted autoplay @play="onPlay" />
             </div>
             <div v-if="!isMobile" class="p-2 bg-neutral-900/70 text-white w-full">
               <ButtonSubscribe />
