@@ -5,7 +5,7 @@ import { useMediaQuery } from "@vueuse/core";
 const isMobile = useMediaQuery("(max-width: 576px)");
 
 const onPlay = () => {
-  const player = document.querySelector("#player video") as HTMLVideoElement;
+  const player = document.querySelector<HTMLVideoElement>("#player video");
   if (!player) return;
   player.currentTime = player.duration;
 };
