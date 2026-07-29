@@ -87,36 +87,38 @@ onUnmounted(() => {
 
 <template>
   <div class="h-screen bg-black">
-    <Splitpanes class="h-full default-theme" :horizontal="isMobile">
-      <Pane :size="isMobile ? 35 : 80" :min-size="isMobile ? 35 : 40">
-        <div class="flex h-full items-center justify-center bg-black flex-col">
-          <div class="aspect-video w-full">
-            <video
-              ref="playerRef"
-              class="w-full h-full"
-              controls
-              autoplay
-              playsinline
-              muted
-            />
+    <ClientOnly>
+      <Splitpanes class="h-full" :horizontal="isMobile" :class="{ 'default-theme': !isMobile }">
+        <Pane :size="isMobile ? 35 : 80" :min-size="isMobile ? 35 : 40">
+          <div class="flex h-full items-center justify-center bg-black flex-col">
+            <div class="aspect-video w-full">
+              <video
+                ref="playerRef"
+                class="w-full h-full"
+                controls
+                autoplay
+                playsinline
+                muted
+              />
+            </div>
+            <div v-if="!isMobile" class="p-2 bg-neutral-900/70 text-white w-full">
+              <ButtonSubscribe />
+            </div>
           </div>
-          <div v-if="!isMobile" class="p-2 bg-neutral-900/70 text-white w-full">
-            <ButtonSubscribe />
-          </div>
-        </div>
-      </Pane>
-      <Pane :size="isMobile ? 65 : 18" :min-size="isMobile ? 65 : 18">
-        <iframe
-          id="chat"
-          allow="autoplay"
-          class="aspect-video w-full h-full"
-          :src="`https://www.twitch.tv/embed/${SITE.platforms.twitch.user}/chat?parent=${SITE.parent}&darkpopout=true`"
-          frameborder="0"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-          :spellcheck="false"
-        />
-      </Pane>
-    </Splitpanes>
+        </Pane>
+        <Pane :size="isMobile ? 65 : 18" :min-size="isMobile ? 65 : 18">
+          <iframe
+            id="chat"
+            allow="autoplay"
+            class="aspect-video w-full h-full"
+            :src="`https://www.twitch.tv/embed/${SITE.platforms.twitch.user}/chat?parent=${SITE.parent}&darkpopout=true`"
+            frameborder="0"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+            :spellcheck="false"
+          />
+        </Pane>
+      </Splitpanes>
+    </ClientOnly>
     <div v-if="isMobile" class="p-2 bg-neutral-950/70 text-white w-full">
       <ButtonSubscribe />
     </div>
