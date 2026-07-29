@@ -48,6 +48,9 @@ importers:
       nuxt-ui-colors-no-inline:
         specifier: ^0.0.5
         version: 0.0.5(1d4228bd883f8a4c3a3c2d1b2fa41400)
+      splitpanes:
+        specifier: ^4.1.2
+        version: 4.1.2(vue@3.5.40(typescript@6.0.3))
       stylelint:
         specifier: ^17.14.1
         version: 17.14.1(supports-color@10.2.2)(typescript@6.0.3)
@@ -5805,6 +5808,11 @@ packages:
   speakingurl@14.0.1:
     resolution: {integrity: sha512-1POYv7uv2gXoyGFpBCmpDVSNV74IfsWlDW216UPjbWufNf+bSU6GdbDsxdcxtfwb4xlI3yxzOTKClUosxARYrQ==}
     engines: {node: '>=0.10.0'}
+
+  splitpanes@4.1.2:
+    resolution: {integrity: sha512-frNchoCv7w0nMQEuaDGgMGMU6jv3NhN6bBGQVfCNgwJdVcYaRmi1dwYDjp7SifAoUFdiQjBRB254LJNidzo15Q==}
+    peerDependencies:
+      vue: ^3.2.0
 
   srvx@0.11.22:
     resolution: {integrity: sha512-LqZxxBDMKuMAZzFzJnDCkFOrs9MZQZr0LvHiO/SuSZVdQaXD7xQ5UWTUxheJrQPve1qk9MG2B/yttUvJxw8egQ==}
@@ -13013,6 +13021,10 @@ snapshots:
 
   speakingurl@14.0.1:
     optional: true
+
+  splitpanes@4.1.2(vue@3.5.40(typescript@6.0.3)):
+    dependencies:
+      vue: 3.5.40(typescript@6.0.3)
 
   srvx@0.11.22: {}
 

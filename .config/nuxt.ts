@@ -54,7 +54,8 @@ export default defineNuxtConfig({
 
   css: [
     "~/assets/css/ui.tailwind.css",
-    "~/assets/scss/app.scss"
+    "~/assets/scss/app.scss",
+    "splitpanes/dist/splitpanes.css"
   ],
 
   site: {
@@ -74,7 +75,7 @@ export default defineNuxtConfig({
     },
     colors: {
       neutral: "zinc",
-      primary: "amber",
+      primary: "purple",
       secondary: "violet",
       error: "red"
     }

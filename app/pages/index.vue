@@ -1,211 +1,135 @@
 <script setup lang="ts">
-const pause = ref(true);
-const volume = ref(0);
+import { Pane, Splitpanes } from "splitpanes";
+import { useMediaQuery } from "@vueuse/core";
 
-onMounted(async () => {
-  const FlvJs = (await import("flv.js")).default;
-  const video = document.getElementById("player") as HTMLVideoElement;
-  const playBtn = document.getElementById("playBtn") as HTMLButtonElement;
-  const muteBtn = document.getElementById("muteBtn") as HTMLButtonElement;
-  const volumeSlider = document.getElementById("volumeSlider") as HTMLInputElement;
-  const volumeValue = document.getElementById("volumeValue") as HTMLSpanElement;
+const isMobile = useMediaQuery("(max-width: 976px)");
+const playerRef = ref<HTMLVideoElement | null>(null);
 
-  video.volume = 0;
+const { $flvjs } = useNuxtApp();
 
-  const RETRY_DELAY = 3000;
+let flvPlayer: ReturnType<typeof $flvjs.createPlayer> | null = null;
+let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+let isUnmounted = false;
 
-  let flvPlayer: ReturnType<typeof FlvJs.createPlayer> | null = null;
-  let retryTimer: ReturnType<typeof setTimeout> | null = null;
-  let destroyed = false;
-  let lastVolumeBeforeMute = Number(volumeSlider.value) / 100;
+const destroyPlayer = () => {
+  if (flvPlayer) {
+    flvPlayer.destroy();
+    flvPlayer = null;
+  }
+};
 
-  function updateVolumeUi () {
-    const volumePercent = Math.round(video.volume * 100);
-    volumeSlider.value = String(volumePercent);
-    volumeValue.textContent = `${volumePercent}%`;
-    if (video.muted || volumePercent === 0) {
-      muteBtn.textContent = "🔇";
-    }
-    else {
-      muteBtn.textContent = "🔊";
-    }
+const clearReconnect = () => {
+  if (reconnectTimer) {
+    clearTimeout(reconnectTimer);
+    reconnectTimer = null;
+  }
+};
+
+const scheduleReconnect = (delay = 3000) => {
+  if (isUnmounted || reconnectTimer) return;
+
+  reconnectTimer = setTimeout(() => {
+    reconnectTimer = null;
+    startPlayer();
+  }, delay);
+};
+
+const startPlayer = () => {
+  if (isUnmounted || !playerRef.value) {
+    scheduleReconnect();
+    return;
   }
 
-  function destroyPlayer () {
-    if (retryTimer) {
-      clearTimeout(retryTimer);
-      retryTimer = null;
-    }
-    if (flvPlayer) {
-      flvPlayer.pause();
-      flvPlayer.unload();
-      flvPlayer.detachMediaElement();
-      flvPlayer.destroy();
-      flvPlayer = null;
-    }
-  }
+  // Evita duplicados
+  destroyPlayer();
 
-  function scheduleReconnect () {
-    if (destroyed) return;
-    if (retryTimer) clearTimeout(retryTimer);
-    retryTimer = setTimeout(startPlayer, RETRY_DELAY);
-  }
-
-  async function startPlayer () {
-    destroyPlayer();
-    if (destroyed) return;
-
-    if (!FlvJs || !FlvJs.isSupported()) {
-      return;
-    }
-
-    flvPlayer = FlvJs.createPlayer(
-      { type: "flv", url: SITE.flvURL, isLive: true },
-      { enableWorker: false, lazyLoad: false, seekType: "range", headers: { "X-Tunnel": "true" } }
+  try {
+    flvPlayer = $flvjs.createPlayer(
+      {
+        type: "flv",
+        url: SITE.flvURL,
+        isLive: true
+      },
+      {
+        enableWorker: false,
+        seekType: "range",
+        lazyLoad: false,
+        headers: { "X-Tunnel": "true" }
+      }
     );
 
-    flvPlayer.attachMediaElement(video);
+    flvPlayer.attachMediaElement(playerRef.value);
     flvPlayer.load();
 
-    await video.play().catch(() => {});
+    flvPlayer.play();
 
-    flvPlayer.on(FlvJs.Events.ERROR, (errType, errDetail) => {
-      console.warn("FLV error", errType, errDetail);
+    flvPlayer.on($flvjs.Events.ERROR, (error) => {
+      console.info("FLV error:", error);
+      destroyPlayer();
       scheduleReconnect();
     });
   }
-
-  // Listeners una sola vez (no dentro de startPlayer)
-  video.addEventListener("pause", () => {
-    pause.value = true;
-  });
-
-  video.addEventListener("play", () => {
-    pause.value = false;
-  });
-
-  video.addEventListener("stalled", scheduleReconnect);
-
-  playBtn.addEventListener("click", () => {
-    if (!flvPlayer) {
-      startPlayer();
-      return;
-    }
-
-    if (video.paused) {
-      if (video.buffered.length > 0) {
-        video.currentTime = video.buffered.end(video.buffered.length - 1) - 0.1;
-      }
-      video.play().catch(() => startPlayer());
-    }
-    else {
-      video.pause();
-    }
-  });
-
-  muteBtn.addEventListener("click", () => {
-    if (!video.muted && video.volume > 0) {
-      lastVolumeBeforeMute = video.volume;
-      video.volume = 0;
-      video.muted = true;
-    }
-    else {
-      video.muted = false;
-      video.volume = lastVolumeBeforeMute > 0 ? lastVolumeBeforeMute : 0.7;
-    }
-    updateVolumeUi();
-  });
-
-  volumeSlider.addEventListener("input", () => {
-    const nextVolume = Number(volumeSlider.value) / 100;
-    video.volume = nextVolume;
-    video.muted = nextVolume === 0;
-    if (nextVolume > 0) {
-      lastVolumeBeforeMute = nextVolume;
-    }
-    updateVolumeUi();
-  });
-
-  window.addEventListener("beforeunload", () => {
-    destroyed = true;
+  catch (error) {
+    console.info("Error creando player:", error);
     destroyPlayer();
-  });
+    scheduleReconnect();
+  }
+};
 
-  await startPlayer();
-  updateVolumeUi();
+onMounted(() => {
+  startPlayer();
+});
+
+onUnmounted(() => {
+  isUnmounted = true;
+  clearReconnect();
+  destroyPlayer();
 });
 </script>
 
 <template>
-  <div id="wrapper" class="relative w-200">
-    <video id="player" autoplay muted playsinline webkit-playsinline class="w-full h-full block aspect-video" />
-    <div id="controls" class="text-lg">
-      <button id="playBtn" class="ctrl-btn">
-        <Icon v-if="pause" name="ph:play-fill" />
-        <Icon v-else name="ph:pause-fill" />
-      </button>
-      <button id="muteBtn" class="ctrl-btn">🔊</button>
-      <label class="volume-wrap" for="volumeSlider">
-        <input id="volumeSlider" type="range" min="0" max="100" :value="volume" step="1">
-        <span id="volumeValue">{{ volume }}%</span>
-      </label>
-    </div>
+  <div class="h-screen bg-black">
+    <Splitpanes class="h-full default-theme" :horizontal="isMobile">
+      <Pane :size="80" :min-size="40">
+        <div class="flex h-full items-center justify-center bg-black flex-col">
+          <div class="aspect-video w-full">
+            <video
+              ref="playerRef"
+              class="w-full h-full"
+              controls
+              autoplay
+              playsinline
+              muted
+            />
+          </div>
+          <div class="p-2 bg-neutral-900/70 text-white w-full">
+            <UButton :to="`https://www.twitch.tv/products/${SITE.platforms.twitch.user}`" target="_blank" label="Suscribirse" />
+          </div>
+        </div>
+      </Pane>
+      <Pane :size="18" :min-size="18">
+        <iframe
+          id="chat"
+          allow="autoplay"
+          class="aspect-video w-full h-full"
+          :src="`https://www.twitch.tv/embed/${SITE.platforms.twitch.user}/chat?parent=${SITE.parent}&darkpopout=true`"
+          frameborder="0"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+          :spellcheck="false"
+        />
+      </Pane>
+    </Splitpanes>
   </div>
 </template>
 
-<style scoped>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-      html, body {
-        width: 100%; height: 100%;
-        background: #000;
-        overflow: hidden;
-      }
-      #player {
-        width: 100%;
-        height: 100%;
-        display: block;
-        background: #000;
-      }
-      #controls {
-        position: absolute;
-        bottom: 0; left: 0; right: 0;
-        padding: 10px;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 1) 50%);
-        opacity: 0;
-        transition: opacity 0.3s;
-      }
-      #wrapper:hover #controls { opacity: 1; }
-      .ctrl-btn {
-        background: rgba(255,255,255,0.15);
-        border: none;
-        color: #fff;
-        padding: 4px 10px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-        backdrop-filter: blur(4px);
-        transition: background 0.2s;
-      }
-      .ctrl-btn:hover { background: rgba(255,255,255,0.3); }
-      .volume-wrap {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #fff;
-        font-family: system-ui, sans-serif;
-        font-size: 13px;
-      }
-      #volumeSlider {
-        width: 120px;
-        accent-color: #fff;
-        cursor: pointer;
-      }
-      #volumeValue {
-        min-width: 36px;
-        color: #ddd;
-        text-align: right;
-      }
-    </style>
+<style>
+.default-theme.splitpanes--vertical>.splitpanes__splitter, .default-theme .splitpanes--vertical>.splitpanes__splitter {
+  border-left: none;
+}
+.default-theme.splitpanes .splitpanes__splitter {
+  background-color: #432c2c;
+  &:hover, &:active {
+    background-color: #8d5d5d;
+  }
+}
+</style>
