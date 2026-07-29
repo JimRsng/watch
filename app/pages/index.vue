@@ -1,8 +1,17 @@
 <script setup lang="ts">
 import { Pane, Splitpanes } from "splitpanes";
-import { useMediaQuery } from "@vueuse/core";
+import { useMediaQuery, useWindowSize } from "@vueuse/core";
 
 const isMobile = useMediaQuery("(max-width: 576px)");
+const { width, height } = useWindowSize();
+
+const mobileVideoSize = computed(() => {
+  if (!isMobile.value) return 80;
+  const videoHeight = (width.value * 9) / 16;
+  const percent = (videoHeight / height.value) * 100;
+  return percent;
+});
+const mobileChatSize = computed(() => 100 - mobileVideoSize.value);
 
 const onPlay = () => {
   const player = document.querySelector<HTMLVideoElement>("#player video");
@@ -15,7 +24,7 @@ const onPlay = () => {
   <div class="h-dvh bg-black">
     <ClientOnly>
       <Splitpanes class="h-full" :horizontal="isMobile" :class="{ 'default-theme': !isMobile }">
-        <Pane :size="isMobile ? 35 : 80" :min-size="isMobile ? 35 : 40">
+        <Pane :size="isMobile ? mobileVideoSize : 80" :min-size="isMobile ? mobileVideoSize : 40">
           <div class="flex h-full items-center justify-center bg-black flex-col">
             <div class="aspect-video w-full">
               <VideoPlayer id="player" :src="SITE.hlsURL" muted autoplay @play="onPlay" />
@@ -25,11 +34,11 @@ const onPlay = () => {
             </div>
           </div>
         </Pane>
-        <Pane :size="isMobile ? 65 : 18" :min-size="isMobile ? 65 : 18">
+        <Pane :size="isMobile ? mobileChatSize : 18" :min-size="isMobile ? mobileChatSize : 18">
           <iframe
             id="chat"
             allow="autoplay"
-            class="aspect-video w-full h-full"
+            class="w-full h-full"
             :src="`https://www.twitch.tv/embed/${SITE.platforms.twitch.user}/chat?parent=${SITE.parent}&darkpopout=true`"
             frameborder="0"
             sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-modals"
