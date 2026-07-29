@@ -86,7 +86,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="h-screen bg-black">
+  <div class="h-dvh bg-black">
     <ClientOnly>
       <Splitpanes class="h-full" :horizontal="isMobile" :class="{ 'default-theme': !isMobile }">
         <Pane :size="isMobile ? 35 : 80" :min-size="isMobile ? 35 : 40">
