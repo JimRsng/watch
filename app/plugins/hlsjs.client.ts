@@ -1,9 +1,9 @@
-import FlvJs from "flv.js";
+import HlsJs from "hls.js";
 
 export default defineNuxtPlugin(() => {
   return {
     provide: {
-      flvjs: FlvJs
+      hls: HlsJs
     }
   };
 });

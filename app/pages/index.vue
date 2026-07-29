@@ -3,17 +3,19 @@ import { Pane, Splitpanes } from "splitpanes";
 import { useMediaQuery } from "@vueuse/core";
 
 const isMobile = useMediaQuery("(max-width: 576px)");
-const playerRef = ref<HTMLVideoElement | null>(null);
+const playerRef = ref<HTMLMediaElement | null>(null);
 
-const { $flvjs } = useNuxtApp();
+const { $hls } = useNuxtApp();
 
-const flvPlayer = ref<ReturnType<typeof $flvjs.createPlayer> | null>(null);
+// ...existing code...
+const hlsPlayer = ref<InstanceType<typeof $hls> | null>(null);
 const reconnectTimer = ref<ReturnType<typeof setTimeout> | null>(null);
+const tOffset = ref(0);
 
 const destroyPlayer = () => {
-  if (flvPlayer.value) {
-    flvPlayer.value.destroy();
-    flvPlayer.value = null;
+  if (hlsPlayer.value) {
+    hlsPlayer.value.destroy();
+    hlsPlayer.value = null;
   }
 };
 
@@ -33,40 +35,29 @@ const scheduleReconnect = (delay = 5000) => {
   }, delay);
 };
 
+const getAppendedOffset = (_eventName: string, { frag }: any) => {
+  if (frag.type === "main" && frag.sn !== "initSegment" && frag.elementaryStreams.video) {
+    const { start, startDTS, startPTS, maxStartPTS, elementaryStreams } = frag;
+    tOffset.value = elementaryStreams.video.startPTS - start;
+    hlsPlayer.value?.off?.($hls.Events.BUFFER_APPENDED, getAppendedOffset);
+    console.log("video timestamp offset:", tOffset.value, { start, startDTS, startPTS, maxStartPTS, elementaryStreams });
+  }
+};
+
 const startPlayer = () => {
   if (!playerRef.value) {
     scheduleReconnect();
     return;
   }
 
-  // Evita duplicados
   destroyPlayer();
 
   try {
-    flvPlayer.value = $flvjs.createPlayer(
-      {
-        type: "flv",
-        url: SITE.flvURL,
-        isLive: true
-      },
-      {
-        enableWorker: false,
-        seekType: "range",
-        lazyLoad: false,
-        headers: { "X-Tunnel": "true" }
-      }
-    );
-
-    flvPlayer.value.attachMediaElement(playerRef.value);
-    flvPlayer.value.load();
-
-    flvPlayer.value.play();
-
-    flvPlayer.value.on($flvjs.Events.ERROR, (error) => {
-      console.info("FLV error:", error);
-      destroyPlayer();
-      scheduleReconnect();
-    });
+    hlsPlayer.value = new $hls();
+    hlsPlayer.value.loadSource(SITE.hlsURL);
+    hlsPlayer.value.attachMedia(playerRef.value);
+    hlsPlayer.value.startLoad();
+    hlsPlayer.value.on($hls.Events.BUFFER_APPENDED, getAppendedOffset);
   }
   catch (error) {
     console.info("Error creando player:", error);
@@ -113,7 +104,7 @@ onUnmounted(() => {
             class="aspect-video w-full h-full"
             :src="`https://www.twitch.tv/embed/${SITE.platforms.twitch.user}/chat?parent=${SITE.parent}&darkpopout=true`"
             frameborder="0"
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+            sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-modals"
             :spellcheck="false"
           />
         </Pane>
