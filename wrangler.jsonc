@@ -1,12 +1,12 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "streaming",
+  "name": "watch",
   "compatibility_date": "2026-07-28",
   "main": ".output/server/index.mjs",
   "compatibility_flags": ["nodejs_compat"],
   "routes": [
     {
-      "pattern": "streaming.jimtracker.com",
+      "pattern": "watch.jimtracker.com",
       "custom_domain": true
     }
   ],

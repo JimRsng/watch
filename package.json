@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "streaming",
+  "name": "watch",
   "version": "1.0.0",
   "description": "Espacio de streaming personal para JimRsng.",
   "type": "module",
@@ -22,12 +22,12 @@
       "url": "https://yizack.com"
     }
   ],
-  "homepage": "https://streaming.jimtracker.com",
+  "homepage": "https://watch.jimtracker.com",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JimRsng/streaming.git"
+    "url": "git+https://github.com/JimRsng/watch.git"
   },
-  "bugs": "https://github.com/JimRsng/streaming/issues",
+  "bugs": "https://github.com/JimRsng/watch/issues",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev --port=5173 --public",
