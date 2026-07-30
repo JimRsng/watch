@@ -33,27 +33,26 @@ const kickChatEmbed = `https://chat.kick.cx/embed/${SITE.platforms.kick.user}`;
             <div class="aspect-video w-full">
               <VideoPlayer id="player" :src="SITE.hlsURL" muted autoplay @play="onPlay" />
             </div>
-            <div v-if="!isMobile" class="flex justify-end w-full gap-2">
-              <!-- Chat Toggler -->
-              <div class="p-2 bg-neutral-900/70 text-white flex items-center justify-center gap-1">
-                Chat:
-                <Icon name="simple-icons:kick" />
-                <USwitch :ui="{ base: 'data-[state=unchecked]:bg-lime-400' }" @click="chatToggle = chatToggle === 'twitch' ? 'kick' : 'twitch'" />
-                <Icon name="simple-icons:twitch" />
-              </div>
+            <div v-if="!isMobile" class="flex justify-end w-full gap-2 p-2">
+              <ChatToggler class="text-white" @update:chat-toggle="chatToggle = $event" />
             </div>
           </div>
         </Pane>
         <Pane :size="isMobile ? mobileChatSize : 18" :min-size="isMobile ? mobileChatSize : 18">
-          <iframe
-            id="chat"
-            allow="autoplay"
-            class="w-full h-full"
-            :src="chatToggle === 'twitch' ? twitchChatEmbed : kickChatEmbed"
-            frameborder="0"
-            sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-forms allow-popups"
-            :spellcheck="false"
-          />
+          <div class="relative h-full">
+            <iframe
+              id="chat"
+              allow="autoplay"
+              class="w-full h-full"
+              :src="chatToggle === 'twitch' ? twitchChatEmbed : kickChatEmbed"
+              frameborder="0"
+              sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-forms allow-popups"
+              :spellcheck="false"
+            />
+            <div v-if="isMobile" class="flex justify-start w-full gap-2 absolute z-1 top-0">
+              <ChatToggler class="p-2 text-white" @update:chat-toggle="chatToggle = $event" />
+            </div>
+          </div>
         </Pane>
       </Splitpanes>
     </ClientOnly>
