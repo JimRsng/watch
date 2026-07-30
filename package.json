@@ -65,6 +65,7 @@
     "stylelint": "^17.14.1",
     "stylelint-config-standard-scss": "^17.0.0",
     "typescript": "^6.0.3",
+    "ufo": "^1.6.4",
     "wrangler": "^4.114.0"
   },
   "packageManager": "pnpm@11.17.0"

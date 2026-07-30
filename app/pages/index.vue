@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { Pane, Splitpanes } from "splitpanes";
-import { useMediaQuery, useWindowSize } from "@vueuse/core";
+import { useElementSize, useMediaQuery, useWindowSize } from "@vueuse/core";
 
 const chatToggle = ref<"twitch" | "kick">("kick");
 const isMobile = useMediaQuery("(max-width: 576px)");
+
+const chatFrame = useTemplateRef("chat-frame");
+const { width: chatFrameWidth } = useElementSize(chatFrame);
+
 const { width, height } = useWindowSize();
 
 const mobileVideoSize = computed(() => {
@@ -19,9 +23,6 @@ const onPlay = () => {
   if (!player) return;
   player.currentTime = player.duration;
 };
-
-const twitchChatEmbed = `https://www.twitch.tv/embed/${SITE.platforms.twitch.user}/chat?parent=${SITE.parent}&darkpopout=true`;
-const kickChatEmbed = `https://chat.kick.cx/embed/${SITE.platforms.kick.user}`;
 </script>
 
 <template>
@@ -39,20 +40,39 @@ const kickChatEmbed = `https://chat.kick.cx/embed/${SITE.platforms.kick.user}`;
           </div>
         </Pane>
         <Pane :size="isMobile ? mobileChatSize : 18" :min-size="isMobile ? mobileChatSize : 18">
-          <div class="relative h-full">
-            <iframe
-              id="chat"
-              allow="autoplay"
-              class="w-full h-full"
-              :src="chatToggle === 'twitch' ? twitchChatEmbed : kickChatEmbed"
-              frameborder="0"
-              sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-forms allow-popups"
-              :spellcheck="false"
-            />
-            <div v-if="isMobile" class="flex justify-start w-full gap-2 absolute z-1 top-0">
-              <ChatToggler class="p-2 text-white" @update:chat-toggle="chatToggle = $event" />
-            </div>
-          </div>
+          <Splitpanes horizontal>
+            <template v-if="!isMobile">
+              <Pane :size="23">
+                <div class="h-full">
+                  <iframe
+                    :src="chatToggle === 'twitch' ? embed.twitch.stream : embed.kick.stream"
+                    :width="chatFrameWidth"
+                    frameborder="0"
+                    scrolling="no"
+                    height="100%"
+                    allowfullscreen
+                  />
+                </div>
+              </Pane>
+            </template>
+            <Pane :size="isMobile ? 100 : mobileVideoSize">
+              <div class="relative h-full">
+                <iframe
+                  id="chat"
+                  ref="chat-frame"
+                  allow="autoplay"
+                  class="w-full h-full"
+                  :src="chatToggle === 'twitch' ? embed.twitch.chat : embed.kick.chat"
+                  frameborder="0"
+                  sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-forms allow-popups"
+                  :spellcheck="false"
+                />
+                <div v-if="isMobile" class="flex justify-start w-full gap-2 absolute z-1 top-0">
+                  <ChatToggler class="p-2 text-white" @update:chat-toggle="chatToggle = $event" />
+                </div>
+              </div>
+            </Pane>
+          </Splitpanes>
         </Pane>
       </Splitpanes>
     </ClientOnly>
