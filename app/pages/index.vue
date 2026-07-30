@@ -34,7 +34,7 @@ const onPlay = () => {
             <div class="aspect-video w-full">
               <VideoPlayer id="player" :src="SITE.hlsURL" muted autoplay @play="onPlay" />
             </div>
-            <div v-if="!isMobile" class="flex justify-end w-full gap-2 p-2">
+            <div v-if="!isMobile" class="flex justify-end w-full gap-2 py-2 px-3">
               <ChatToggler v-model="chatToggle" class="text-white" />
             </div>
           </div>
@@ -80,8 +80,9 @@ const onPlay = () => {
 </template>
 
 <style>
-.default-theme.splitpanes--vertical>.splitpanes__splitter, .default-theme .splitpanes--vertical>.splitpanes__splitter {
-  border-left: none;
+.default-theme.splitpanes--vertical>.splitpanes__splitter, .default-theme .splitpanes--vertical>.splitpanes__splitter,
+.default-theme.splitpanes--horizontal>.splitpanes__splitter, .default-theme .splitpanes--horizontal>.splitpanes__splitter {
+  border: none;
 }
 .default-theme.splitpanes .splitpanes__splitter {
   background-color: #432c2c;
