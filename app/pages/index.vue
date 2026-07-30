@@ -85,9 +85,9 @@ const onPlay = () => {
   border: none;
 }
 .default-theme.splitpanes .splitpanes__splitter {
-  background-color: #432c2c;
+  background-color: #414141;
   &:hover, &:active {
-    background-color: #8d5d5d;
+    background-color: #aaaaaa;
   }
 }
 .default-theme.splitpanes .splitpanes__pane {
