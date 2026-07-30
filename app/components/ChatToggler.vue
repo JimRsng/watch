@@ -21,8 +21,8 @@ watch(model, (newValue) => {
 
 <template>
   <div class="flex items-center justify-center gap-1">
-    <Icon name="simple-icons:kick" />
+    <Icon name="simple-icons:kick" :class="{ 'text-lime-400': !switchValue }" size="20" />
     <USwitch v-model="switchValue" :ui="{ base: 'data-[state=unchecked]:bg-lime-400' }" @click="toggleChat" />
-    <Icon name="simple-icons:twitch" />
+    <Icon name="simple-icons:twitch" :class="{ 'text-purple-400': switchValue }" size="20" />
   </div>
 </template>
