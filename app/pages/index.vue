@@ -2,7 +2,7 @@
 import { Pane, Splitpanes } from "splitpanes";
 import { useElementSize, useMediaQuery, useWindowSize } from "@vueuse/core";
 
-const chatToggle = ref<"twitch" | "kick">("kick");
+const chatToggle = ref<Platform>("kick");
 const isMobile = useMediaQuery("(max-width: 576px)");
 
 const chatFrame = useTemplateRef("chat-frame");
