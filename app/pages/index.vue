@@ -21,7 +21,8 @@ const mobileChatSize = computed(() => 100 - mobileVideoSize.value);
 const onPlay = () => {
   const player = document.querySelector<HTMLVideoElement>("#player video");
   if (!player) return;
-  player.currentTime = player.duration;
+  if (player.duration - player.currentTime < 6) return;
+  player.currentTime = player.duration - 6;
 };
 </script>
 
