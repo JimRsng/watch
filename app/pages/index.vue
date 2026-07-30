@@ -35,7 +35,7 @@ const onPlay = () => {
               <VideoPlayer id="player" :src="SITE.hlsURL" muted autoplay @play="onPlay" />
             </div>
             <div v-if="!isMobile" class="flex justify-end w-full gap-2 p-2">
-              <ChatToggler class="text-white" @update:chat-toggle="chatToggle = $event" />
+              <ChatToggler v-model="chatToggle" class="text-white" />
             </div>
           </div>
         </Pane>
@@ -68,7 +68,7 @@ const onPlay = () => {
                   :spellcheck="false"
                 />
                 <div v-if="isMobile" class="flex justify-start w-full gap-2 absolute z-1 top-0">
-                  <ChatToggler class="p-2 text-white" @update:chat-toggle="chatToggle = $event" />
+                  <ChatToggler v-model="chatToggle" class="p-2 text-white" />
                 </div>
               </div>
             </Pane>

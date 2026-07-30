@@ -1,13 +1,8 @@
 <script setup lang="ts">
-const chatToggle = ref<"twitch" | "kick">("kick");
-
-const emit = defineEmits<{
-  (e: "update:chatToggle", value: "twitch" | "kick"): void;
-}>();
+const model = defineModel<"twitch" | "kick">({ default: "kick" });
 
 const toggleChat = () => {
-  chatToggle.value = chatToggle.value === "twitch" ? "kick" : "twitch";
-  emit("update:chatToggle", chatToggle.value);
+  model.value = model.value === "twitch" ? "kick" : "twitch";
 };
 </script>
 
