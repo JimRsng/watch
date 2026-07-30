@@ -14,9 +14,9 @@ export const embed = {
     })
   },
   kick: {
-    stream: withQuery(`https://player.kick.com/${SITE.platforms.kick.user}`, {
-      autoplay: true,
-      muted: true
+    stream: withQuery(`https://player.kick.cx/${SITE.platforms.kick.user}`, {
+      reload: false,
+      pip: false
     }),
     chat: `https://chat.kick.cx/embed/${SITE.platforms.kick.user}`
   }
