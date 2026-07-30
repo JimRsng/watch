@@ -56,17 +56,9 @@ const onPlay = () => {
               </Pane>
             </template>
             <Pane :size="isMobile ? 100 : mobileVideoSize">
-              <div class="relative h-full">
-                <iframe
-                  id="chat"
-                  ref="chat-frame"
-                  allow="autoplay"
-                  class="w-full h-full"
-                  :src="chatToggle === 'twitch' ? embed.twitch.chat : embed.kick.chat"
-                  frameborder="0"
-                  sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-forms allow-popups"
-                  :spellcheck="false"
-                />
+              <div ref="chat-frame" class="relative h-full">
+                <ChatFrame :src="embed.kick.chat" :class="{ hidden: chatToggle === 'twitch' }" />
+                <ChatFrame :src="embed.twitch.chat" :class="{ hidden: chatToggle === 'kick' }" />
                 <div v-if="isMobile" class="flex justify-start w-full gap-2 absolute z-1 top-0">
                   <ChatToggler v-model="chatToggle" class="p-2 text-white" />
                 </div>
