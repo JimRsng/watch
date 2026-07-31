@@ -13,3 +13,6 @@ allowBuilds:
   unrs-resolver: false
   vue-demi: false
   workerd: false
+
+patchedDependencies:
+  '@vue-player/vue': patches/@vue-player__vue.patch

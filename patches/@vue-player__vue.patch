@@ -1,0 +1,1755 @@
+diff --git a/dist/index.mjs b/dist/index.mjs
+index a7171ff003302f6139ccc92b9b5cb13317521f4c..9704c7c0c025f8e1c50c2a6df4b7e3fd65a2191f 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -1,6 +1,6 @@
+-import { reactive as f1, onMounted as r1, onUnmounted as m1, readonly as g1, openBlock as r, createElementBlock as u, createElementVNode as a, defineComponent as U, createBlock as x, ref as k, watch as F, computed as A, onBeforeUnmount as s1, normalizeClass as N, Fragment as X, renderList as J, normalizeStyle as K, createCommentVNode as I, toDisplayString as q, createTextVNode as t1, unref as m, createStaticVNode as c1, withKeys as d1, withModifiers as n1, createVNode as M, Transition as e1, withCtx as W, Teleport as y1, nextTick as h1, renderSlot as Y, normalizeProps as k1, guardReactiveProps as b1 } from "vue";
+-import { detectSourceType as w1, createNativeAdapter as L1, getFullscreenElement as _1, exitFullscreen as $1, enterFullscreen as M1, formatTime as i1, isPiPSupported as x1, parseThumbnailVtt as E1 } from "@vue-player/core";
+-const P1 = {
++import { reactive as f1, onMounted as r1, onUnmounted as m1, readonly as g1, openBlock as l, createElementBlock as u, createElementVNode as a, defineComponent as U, createBlock as x, ref as b, watch as F, computed as A, onBeforeUnmount as s1, normalizeClass as N, Fragment as X, renderList as J, normalizeStyle as K, createCommentVNode as I, toDisplayString as q, createTextVNode as t1, unref as m, createStaticVNode as c1, withKeys as d1, withModifiers as n1, createVNode as M, Transition as e1, withCtx as W, Teleport as y1, nextTick as h1, renderSlot as Y, normalizeProps as k1, guardReactiveProps as b1 } from "vue";
++import { detectSourceType as w1, createNativeAdapter as L1, getFullscreenElement as _1, exitFullscreen as $1, enterFullscreen as M1, formatTime as i1, isPiPSupported as x1, parseThumbnailVtt as P1 } from "@vue-player/core";
++const E1 = {
+   1: "Playback was aborted.",
+   2: "Network error — could not load the video.",
+   3: "The video format is not supported by your browser.",
+@@ -29,42 +29,42 @@ function T1() {
+     error: null
+   };
+ }
+-function V1(l) {
++function V1(n) {
+   const e = f1(T1());
+-  let i = null, v = null, h = "";
++  let i = null, p = null, y = "";
+   function g() {
+-    const t = l.value;
++    const t = n.value;
+     t && (t.pause(), t.removeAttribute("src"), t.load());
+   }
+   function o() {
+-    i == null || i.destroy(), i = null, v == null || v.destroy(), v = null, g();
++    i == null || i.destroy(), i = null, p == null || p.destroy(), p = null, g();
+   }
+-  function d(t) {
++  function v(t) {
+     e.isPlaying = !t.paused && !t.ended, e.isPaused = t.paused, e.isEnded = t.ended, e.currentTime = t.currentTime, e.duration = Number.isFinite(t.duration) ? t.duration : 0, e.volume = t.volume, e.isMuted = t.muted, e.playbackRate = t.playbackRate, e.isLive = t.duration === 1 / 0, t.buffered.length > 0 && (e.buffered = t.buffered.end(t.buffered.length - 1));
+   }
+   async function T(t) {
+-    const C = l.value;
+-    if (!C) return;
+-    if (h = t, o(), e.error = null, e.isLoading = !0, e.currentTime = 0, e.duration = 0, e.buffered = 0, e.isLive = !1, e.availableQualities = [], e.currentQuality = "auto", w1(t) === "hls")
++    const c = n.value;
++    if (!c) return;
++    if (y = t, o(), e.error = null, e.isLoading = !0, e.currentTime = 0, e.duration = 0, e.buffered = 0, e.isLive = !1, e.availableQualities = [], e.currentQuality = "auto", w1(t) === "hls")
+       try {
+-        const { default: b } = await import("hls.js");
+-        if (!b.isSupported()) {
+-          C.src = t;
++        const { default: w } = await import("hls.js");
++        if (!w.isSupported()) {
++          c.src = t;
+           return;
+         }
+-        const L = new b({ enableWorker: !0 });
+-        L.on(b.Events.MANIFEST_PARSED, () => {
++        const _ = new w({ enableWorker: !0 });
++        _.on(w.Events.MANIFEST_PARSED, () => {
+           const S = /* @__PURE__ */ new Set();
+-          e.availableQualities = L.levels.map(($, Z) => ({
++          e.availableQualities = _.levels.map(($, Z) => ({
+             value: $.height,
+             label: $.height ? `${$.height}p` : `Level ${Z}`,
+             bitrate: $.bitrate
+           })).filter(($) => S.has($.value) ? !1 : (S.add($.value), !0)).sort(($, Z) => Z.value - $.value), e.currentQuality = "auto";
+-        }), L.on(b.Events.LEVEL_SWITCHED, (S, $) => {
++        }), _.on(w.Events.LEVEL_SWITCHED, (S, $) => {
+           if (e.currentQuality === "auto") return;
+-          const Z = L.levels[$.level];
++          const Z = _.levels[$.level];
+           Z && Z.height !== e.currentQuality && (e.currentQuality = Z.height);
+-        }), L.on(b.Events.ERROR, (S, $) => {
++        }), _.on(w.Events.ERROR, (S, $) => {
+           var D;
+           if (!$.fatal) return;
+           const Z = ((D = $.response) == null ? void 0 : D.code) ?? 0, z = Z === 404;
+@@ -72,51 +72,51 @@ function V1(l) {
+             code: Z,
+             message: z ? "Stream not found (404)." : "Failed to load the stream. Check the URL or try again.",
+             type: "network"
+-          }, e.isLoading = !1, e.isBuffering = !1, L.destroy();
+-        }), L.loadSource(t), L.attachMedia(C), v = L;
++          }, e.isLoading = !1, e.isBuffering = !1, _.destroy();
++        }), _.loadSource(t), _.attachMedia(c), p = _;
+       } catch {
+         e.error = { code: 0, message: "Failed to initialize HLS player.", type: "source" }, e.isLoading = !1;
+       }
+     else
+-      i = L1(C), i.load(t);
++      i = L1(c), i.load(t);
+   }
+   function R() {
+     e.isFullscreen = !!document.fullscreenElement;
+   }
+   function V(t) {
+-    const C = e.currentTrack;
+-    Array.from(t.querySelectorAll("track")).forEach((E) => {
+-      const b = E.track, L = C !== null && b.language === C.language && b.label === C.label;
+-      b.mode = L ? "hidden" : "disabled";
++    const c = e.currentTrack;
++    Array.from(t.querySelectorAll("track")).forEach((P) => {
++      const w = P.track, _ = c !== null && w.language === c.language && w.label === c.label;
++      w.mode = _ ? "hidden" : "disabled";
+     });
+   }
+-  function w(t) {
++  function L(t) {
+     t.addEventListener("loadstart", () => {
+       e.isLoading = !0, e.error = null;
+     }), t.addEventListener("loadedmetadata", () => {
+-      d(t);
++      v(t);
+     }), t.addEventListener("canplay", () => {
+       e.isLoading = !1;
+     }), t.addEventListener("waiting", () => {
+       e.isBuffering = !0;
+     }), t.addEventListener("playing", () => {
+-      e.isBuffering = !1, d(t);
+-    }), t.addEventListener("play", () => d(t)), t.addEventListener("pause", () => {
+-      e.isBuffering = !1, d(t);
+-    }), t.addEventListener("ended", () => d(t)), t.addEventListener("timeupdate", () => d(t)), t.addEventListener("volumechange", () => d(t)), t.addEventListener("durationchange", () => d(t)), t.addEventListener("progress", () => d(t)), t.addEventListener("ratechange", () => {
++      e.isBuffering = !1, v(t);
++    }), t.addEventListener("play", () => v(t)), t.addEventListener("pause", () => {
++      e.isBuffering = !1, v(t);
++    }), t.addEventListener("ended", () => v(t)), t.addEventListener("timeupdate", () => v(t)), t.addEventListener("volumechange", () => v(t)), t.addEventListener("durationchange", () => v(t)), t.addEventListener("progress", () => v(t)), t.addEventListener("ratechange", () => {
+       e.playbackRate = t.playbackRate;
+     }), t.addEventListener("error", () => {
+-      const C = t.error;
+-      if (!C) return;
+-      const E = {
++      const c = t.error;
++      if (!c) return;
++      const P = {
+         [MediaError.MEDIA_ERR_NETWORK]: "network",
+         [MediaError.MEDIA_ERR_DECODE]: "decode",
+         [MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED]: "source"
+       };
+       e.error = {
+-        code: C.code,
+-        message: P1[C.code] ?? C.message ?? "Unknown playback error.",
+-        type: E[C.code] ?? "unknown"
++        code: c.code,
++        message: E1[c.code] ?? c.message ?? "Unknown playback error.",
++        type: P[c.code] ?? "unknown"
+       }, e.isLoading = !1, e.isBuffering = !1;
+     }), t.addEventListener("enterpictureinpicture", () => {
+       e.isPiP = !0;
+@@ -127,74 +127,74 @@ function V1(l) {
+   const H = {
+     async play() {
+       var t;
+-      await ((t = l.value) == null ? void 0 : t.play());
++      await ((t = n.value) == null ? void 0 : t.play());
+     },
+     pause() {
+       var t;
+-      (t = l.value) == null || t.pause();
++      (t = n.value) == null || t.pause();
+     },
+     seek(t) {
+-      const C = l.value;
+-      !C || !e.duration || (C.currentTime = Math.max(0, Math.min(e.duration, t)));
++      const c = n.value;
++      !c || !e.duration || (c.currentTime = Math.max(0, Math.min(e.duration, t)));
+     },
+     setVolume(t) {
+-      const C = l.value;
+-      C && (C.volume = Math.max(0, Math.min(1, t)), C.muted && t > 0 && (C.muted = !1));
++      const c = n.value;
++      c && (c.volume = Math.max(0, Math.min(1, t)), c.muted && t > 0 && (c.muted = !1));
+     },
+     toggleMute() {
+-      l.value && (l.value.muted = !l.value.muted);
++      n.value && (n.value.muted = !n.value.muted);
+     },
+     setSpeed(t) {
+-      l.value && (l.value.playbackRate = t);
++      n.value && (n.value.playbackRate = t);
+     },
+     setQuality(t) {
+-      if (v) {
++      if (p) {
+         if (t === "auto")
+-          v.currentLevel = -1;
++          p.currentLevel = -1;
+         else {
+-          const C = v.levels.findIndex((E) => E.height === t);
+-          C !== -1 && (v.nextLevel = C);
++          const c = p.levels.findIndex((P) => P.height === t);
++          c !== -1 && (p.nextLevel = c);
+         }
+         e.currentQuality = t;
+       }
+     },
+     setTrack(t) {
+       e.currentTrack = t;
+-      const C = l.value;
+-      C && V(C);
++      const c = n.value;
++      c && V(c);
+     },
+     async toggleFullscreen() {
+-      var E;
+-      const t = l.value, C = t == null ? void 0 : t.closest(".vp-player");
+-      if (C)
++      var P;
++      const t = n.value, c = t == null ? void 0 : t.closest(".vp-player");
++      if (c)
+         if (_1())
+           await $1();
+-        else if ("requestFullscreen" in C || "webkitRequestFullscreen" in C)
+-          await M1(C);
++        else if ("requestFullscreen" in c || "webkitRequestFullscreen" in c)
++          await M1(c);
+         else {
+-          const b = t;
+-          (E = b.webkitEnterFullscreen) == null || E.call(b);
++          const w = t;
++          (P = w.webkitEnterFullscreen) == null || P.call(w);
+         }
+     },
+     async togglePiP() {
+-      const t = l.value;
++      const t = n.value;
+       t && (document.pictureInPictureElement ? await document.exitPictureInPicture() : await t.requestPictureInPicture());
+     },
+     retry() {
+-      h && T(h);
++      y && T(y);
+     }
+   };
+   return r1(() => {
+-    const t = l.value;
+-    t && (w(t), d(t));
++    const t = n.value;
++    t && (L(t), v(t));
+   }), m1(() => {
+     o(), document.removeEventListener("fullscreenchange", R);
+   }), { state: g1(e), controls: H, loadSource: T };
+ }
+-const P = (l, e) => {
+-  const i = l.__vccOpts || l;
+-  for (const [v, h] of e)
+-    i[v] = h;
++const E = (n, e) => {
++  const i = n.__vccOpts || n;
++  for (const [p, y] of e)
++    i[p] = y;
+   return i;
+ }, H1 = {}, S1 = {
+   class: "vp-svg-icon",
+@@ -203,8 +203,8 @@ const P = (l, e) => {
+   xmlns: "http://www.w3.org/2000/svg",
+   "aria-hidden": "true"
+ };
+-function Z1(l, e) {
+-  return r(), u("svg", S1, [...e[0] || (e[0] = [
++function Z1(n, e) {
++  return l(), u("svg", S1, [...e[0] || (e[0] = [
+     a("path", {
+       "fill-rule": "evenodd",
+       "clip-rule": "evenodd",
+@@ -213,15 +213,15 @@ function Z1(l, e) {
+     }, null, -1)
+   ])]);
+ }
+-const v1 = /* @__PURE__ */ P(H1, [["render", Z1]]), B1 = {}, R1 = {
++const v1 = /* @__PURE__ */ E(H1, [["render", Z1]]), B1 = {}, R1 = {
+   class: "vp-svg-icon",
+   viewBox: "0 0 24 24",
+   fill: "none",
+   xmlns: "http://www.w3.org/2000/svg",
+   "aria-hidden": "true"
+ };
+-function F1(l, e) {
+-  return r(), u("svg", R1, [...e[0] || (e[0] = [
++function F1(n, e) {
++  return l(), u("svg", R1, [...e[0] || (e[0] = [
+     a("path", {
+       "fill-rule": "evenodd",
+       "clip-rule": "evenodd",
+@@ -230,19 +230,19 @@ function F1(l, e) {
+     }, null, -1)
+   ])]);
+ }
+-const p1 = /* @__PURE__ */ P(B1, [["render", F1]]), I1 = ["aria-label"], Q1 = /* @__PURE__ */ U({
++const p1 = /* @__PURE__ */ E(B1, [["render", F1]]), I1 = ["aria-label"], Q1 = /* @__PURE__ */ U({
+   __name: "VpPlayButton",
+   props: {
+     isPlaying: { type: Boolean }
+   },
+   emits: ["click"],
+-  setup(l) {
+-    return (e, i) => (r(), u("button", {
++  setup(n) {
++    return (e, i) => (l(), u("button", {
+       class: "vp-button",
+-      "aria-label": l.isPlaying ? "Pause" : "Play",
+-      onClick: i[0] || (i[0] = (v) => e.$emit("click"))
++      "aria-label": n.isPlaying ? "Pause" : "Play",
++      onClick: i[0] || (i[0] = (p) => e.$emit("click"))
+     }, [
+-      l.isPlaying ? (r(), x(p1, { key: 0 })) : (r(), x(v1, { key: 1 }))
++      n.isPlaying ? (l(), x(p1, { key: 0 })) : (l(), x(v1, { key: 1 }))
+     ], 8, I1));
+   }
+ }), A1 = {
+@@ -261,142 +261,142 @@ const p1 = /* @__PURE__ */ P(B1, [["render", F1]]), I1 = ["aria-label"], Q1 = /*
+     thumbnailCues: {}
+   },
+   emits: ["seek", "seekstart", "seekend"],
+-  setup(l, { emit: e }) {
+-    const i = l, v = e, h = k(null), g = k(!1), o = k(0), d = k(null), T = k(null);
++  setup(n, { emit: e }) {
++    const i = n, p = e, y = b(null), g = b(!1), o = b(0), v = b(null), T = b(null);
+     F(
+       () => i.currentTime,
+       (s) => {
+         T.value !== null && Math.abs(s - T.value) < 1 && (T.value = null);
+       }
+     );
+-    const R = A(() => g.value ? o.value * i.duration : T.value !== null ? T.value : i.currentTime), V = A(() => i.duration > 0 ? R.value / i.duration : 0), w = A(() => i.duration > 0 ? i.buffered / i.duration : 0), H = A(() => {
+-      var _;
++    const R = A(() => g.value ? o.value * i.duration : T.value !== null ? T.value : i.currentTime), V = A(() => i.duration > 0 ? R.value / i.duration : 0), L = A(() => i.duration > 0 ? i.buffered / i.duration : 0), H = A(() => {
++      var k;
+       const s = i.duration;
+-      if (!s || !((_ = i.chapters) != null && _.length)) return [{ start: 0, end: 1 }];
+-      const f = [...i.chapters].sort((B, a1) => B.time - a1.time);
+-      return f.map((B, a1) => {
++      if (!s || !((k = i.chapters) != null && k.length)) return [{ start: 0, end: 1 }];
++      const d = [...i.chapters].sort((B, a1) => B.time - a1.time);
++      return d.map((B, a1) => {
+         var o1;
+         return {
+           start: B.time / s,
+-          end: (((o1 = f[a1 + 1]) == null ? void 0 : o1.time) ?? s) / s,
++          end: (((o1 = d[a1 + 1]) == null ? void 0 : o1.time) ?? s) / s,
+           label: B.label
+         };
+       });
+     });
+     function t(s) {
+-      const f = h.value;
+-      if (!f) return 0;
+-      const _ = f.getBoundingClientRect();
+-      return Math.max(0, Math.min(1, (s.clientX - _.left) / _.width));
++      const d = y.value;
++      if (!d) return 0;
++      const k = d.getBoundingClientRect();
++      return Math.max(0, Math.min(1, (s.clientX - k.left) / k.width));
+     }
+-    function C(s = !1) {
+-      g.value && (g.value = !1, window.removeEventListener("pointermove", L), window.removeEventListener("pointerup", S), window.removeEventListener("pointercancel", E), s && v("seekend"));
++    function c(s = !1) {
++      g.value && (g.value = !1, window.removeEventListener("pointermove", _), window.removeEventListener("pointerup", S), window.removeEventListener("pointercancel", P), s && p("seekend"));
+     }
+-    function E() {
+-      C(!0);
++    function P() {
++      c(!0);
+     }
+-    function b(s) {
+-      i.duration && (g.value = !0, o.value = t(s), v("seekstart"), window.addEventListener("pointermove", L), window.addEventListener("pointerup", S), window.addEventListener("pointercancel", E));
++    function w(s) {
++      i.duration && (g.value = !0, o.value = t(s), p("seekstart"), window.addEventListener("pointermove", _), window.addEventListener("pointerup", S), window.addEventListener("pointercancel", P));
+     }
+-    function L(s) {
++    function _(s) {
+       o.value = t(s);
+     }
+     function S(s) {
+-      const _ = t(s) * i.duration;
+-      T.value = _, v("seek", _), C(), v("seekend");
++      const k = t(s) * i.duration;
++      T.value = k, p("seek", k), c(), p("seekend");
+     }
+     function $(s) {
+-      g.value || (d.value = t(s));
++      g.value || (v.value = t(s));
+     }
+     function Z() {
+-      d.value = null;
++      v.value = null;
+     }
+-    s1(C);
++    s1(c);
+     function z(s) {
+-      const f = V.value;
+-      return f <= s.start ? 0 : f >= s.end ? 100 : (f - s.start) / (s.end - s.start) * 100;
++      const d = V.value;
++      return d <= s.start ? 0 : d >= s.end ? 100 : (d - s.start) / (s.end - s.start) * 100;
+     }
+     function D(s) {
+-      const f = w.value;
+-      return f <= s.start ? 0 : f >= s.end ? 100 : (f - s.start) / (s.end - s.start) * 100;
++      const d = L.value;
++      return d <= s.start ? 0 : d >= s.end ? 100 : (d - s.start) / (s.end - s.start) * 100;
+     }
+     const G = A(() => {
+-      const s = d.value;
+-      return s === null ? -1 : H.value.findIndex((f) => s >= f.start && s < f.end);
+-    }), Q = A(() => g.value ? o.value : d.value), j = A(
++      const s = v.value;
++      return s === null ? -1 : H.value.findIndex((d) => s >= d.start && s < d.end);
++    }), Q = A(() => g.value ? o.value : v.value), j = A(
+       () => Q.value !== null ? Q.value * i.duration : 0
+     ), O = A(() => {
+-      var f, _;
++      var d, k;
+       const s = Q.value;
+-      return !((f = i.chapters) != null && f.length) || s === null ? null : ((_ = H.value.find((B) => s >= B.start && s < B.end)) == null ? void 0 : _.label) ?? null;
+-    }), p = A(() => Q.value !== null && i.duration > 0), n = A(() => {
++      return !((d = i.chapters) != null && d.length) || s === null ? null : ((k = H.value.find((B) => s >= B.start && s < B.end)) == null ? void 0 : k.label) ?? null;
++    }), f = A(() => Q.value !== null && i.duration > 0), C = A(() => {
+       const s = i.thumbnailCues;
+       if (!(s != null && s.length)) return null;
+-      const f = Q.value;
+-      if (f === null) return null;
+-      const _ = f * i.duration;
+-      return s.find((B) => _ >= B.start && _ < B.end) ?? null;
+-    }), c = A(() => {
+-      const s = n.value;
++      const d = Q.value;
++      if (d === null) return null;
++      const k = d * i.duration;
++      return s.find((B) => k >= B.start && k < B.end) ?? null;
++    }), r = A(() => {
++      const s = C.value;
+       return !s || s.x === void 0 ? null : {
+         backgroundImage: `url(${s.url})`,
+         backgroundPosition: `-${s.x}px -${s.y}px`,
+         width: `${s.w}px`,
+         height: `${s.h}px`
+       };
+-    }), y = A(() => {
+-      const s = (Q.value ?? 0) * 100, f = n.value ? "88px" : "46px";
+-      return { left: `clamp(${f}, ${s}%, calc(100% - ${f}))` };
++    }), h = A(() => {
++      const s = (Q.value ?? 0) * 100, d = C.value ? "88px" : "46px";
++      return { left: `clamp(${d}, ${s}%, calc(100% - ${d}))` };
+     });
+-    return (s, f) => (r(), u("div", {
++    return (s, d) => (l(), u("div", {
+       ref_key: "trackRef",
+-      ref: h,
++      ref: y,
+       class: N(["vp-timeline", { "vp-timeline--seeking": g.value }]),
+-      onPointerdown: b
++      onPointerdown: w
+     }, [
+       a("div", {
+         class: "vp-timeline-track",
+         onMousemove: $,
+         onMouseleave: Z
+       }, [
+-        (r(!0), u(X, null, J(H.value, (_, B) => (r(), u("div", {
++        (l(!0), u(X, null, J(H.value, (k, B) => (l(), u("div", {
+           key: B,
+           class: N(["vp-timeline-segment", { "vp-timeline-segment--active": B === G.value }]),
+-          style: K({ flex: _.end - _.start })
++          style: K({ flex: k.end - k.start })
+         }, [
+           a("div", {
+             class: "vp-timeline-buffered",
+-            style: K({ width: D(_) + "%" })
++            style: K({ width: D(k) + "%" })
+           }, null, 4),
+           a("div", {
+             class: "vp-timeline-fill",
+-            style: K({ width: z(_) + "%" })
++            style: K({ width: z(k) + "%" })
+           }, null, 4)
+         ], 6))), 128))
+       ], 32),
+-      l.duration > 0 ? (r(), u("div", {
++      n.duration > 0 ? (l(), u("div", {
+         key: 0,
+         class: "vp-timeline-thumb",
+         style: K({ "--progress": V.value })
+       }, null, 4)) : I("", !0),
+-      p.value ? (r(), u("div", {
++      f.value ? (l(), u("div", {
+         key: 1,
+         class: "vp-timeline-tooltip",
+-        style: K(y.value)
++        style: K(h.value)
+       }, [
+-        n.value ? (r(), u("div", A1, [
+-          c.value ? (r(), u("div", {
++        C.value ? (l(), u("div", A1, [
++          r.value ? (l(), u("div", {
+             key: 0,
+             class: "vp-thumbnail-sprite",
+-            style: K(c.value)
+-          }, null, 4)) : (r(), u("img", {
++            style: K(r.value)
++          }, null, 4)) : (l(), u("img", {
+             key: 1,
+             class: "vp-thumbnail-img",
+-            src: n.value.url,
++            src: C.value.url,
+             draggable: "false"
+           }, null, 8, q1))
+         ])) : I("", !0),
+-        O.value ? (r(), u("span", D1, q(O.value), 1)) : I("", !0),
++        O.value ? (l(), u("span", D1, q(O.value), 1)) : I("", !0),
+         t1(" " + q(m(i1)(j.value)), 1)
+       ], 4)) : I("", !0)
+     ], 34));
+@@ -407,11 +407,11 @@ const p1 = /* @__PURE__ */ P(B1, [["render", F1]]), I1 = ["aria-label"], Q1 = /*
+     currentTime: {},
+     duration: {}
+   },
+-  setup(l) {
+-    return (e, i) => (r(), u("span", O1, [
+-      a("span", K1, q(m(i1)(l.currentTime)), 1),
++  setup(n) {
++    return (e, i) => (l(), u("span", O1, [
++      a("span", K1, q(m(i1)(n.currentTime)), 1),
+       i[0] || (i[0] = a("span", { class: "vp-time-sep" }, "/", -1)),
+-      a("span", null, q(m(i1)(l.duration)), 1)
++      a("span", null, q(m(i1)(n.duration)), 1)
+     ]));
+   }
+ }), z1 = {}, j1 = {
+@@ -421,8 +421,8 @@ const p1 = /* @__PURE__ */ P(B1, [["render", F1]]), I1 = ["aria-label"], Q1 = /*
+   xmlns: "http://www.w3.org/2000/svg",
+   "aria-hidden": "true"
+ };
+-function W1(l, e) {
+-  return r(), u("svg", j1, [...e[0] || (e[0] = [
++function W1(n, e) {
++  return l(), u("svg", j1, [...e[0] || (e[0] = [
+     a("path", {
+       "fill-rule": "evenodd",
+       "clip-rule": "evenodd",
+@@ -431,15 +431,15 @@ function W1(l, e) {
+     }, null, -1)
+   ])]);
+ }
+-const G1 = /* @__PURE__ */ P(z1, [["render", W1]]), X1 = {}, J1 = {
++const G1 = /* @__PURE__ */ E(z1, [["render", W1]]), X1 = {}, J1 = {
+   class: "vp-svg-icon",
+   viewBox: "0 0 24 24",
+   fill: "none",
+   xmlns: "http://www.w3.org/2000/svg",
+   "aria-hidden": "true"
+ };
+-function Y1(l, e) {
+-  return r(), u("svg", J1, [...e[0] || (e[0] = [
++function Y1(n, e) {
++  return l(), u("svg", J1, [...e[0] || (e[0] = [
+     a("path", {
+       "fill-rule": "evenodd",
+       "clip-rule": "evenodd",
+@@ -452,15 +452,15 @@ function Y1(l, e) {
+     }, null, -1)
+   ])]);
+ }
+-const e2 = /* @__PURE__ */ P(X1, [["render", Y1]]), t2 = {}, n2 = {
++const e2 = /* @__PURE__ */ E(X1, [["render", Y1]]), t2 = {}, n2 = {
+   class: "vp-svg-icon",
+   viewBox: "0 0 24 24",
+   fill: "none",
+   xmlns: "http://www.w3.org/2000/svg",
+   "aria-hidden": "true"
+ };
+-function l2(l, e) {
+-  return r(), u("svg", n2, [...e[0] || (e[0] = [
++function l2(n, e) {
++  return l(), u("svg", n2, [...e[0] || (e[0] = [
+     a("path", {
+       "fill-rule": "evenodd",
+       "clip-rule": "evenodd",
+@@ -469,25 +469,25 @@ function l2(l, e) {
+     }, null, -1)
+   ])]);
+ }
+-const r2 = /* @__PURE__ */ P(t2, [["render", l2]]), s2 = { class: "vp-volume" }, a2 = ["aria-label"], i2 = ["value"], o2 = /* @__PURE__ */ U({
++const r2 = /* @__PURE__ */ E(t2, [["render", l2]]), s2 = { class: "vp-volume" }, a2 = ["aria-label"], i2 = ["value"], o2 = /* @__PURE__ */ U({
+   __name: "VpVolumeControl",
+   props: {
+     volume: {},
+     isMuted: { type: Boolean }
+   },
+   emits: ["toggleMute", "setVolume"],
+-  setup(l, { emit: e }) {
++  setup(n, { emit: e }) {
+     const i = e;
+-    function v(h) {
+-      i("setVolume", Number(h.target.value));
++    function p(y) {
++      i("setVolume", Number(y.target.value));
+     }
+-    return (h, g) => (r(), u("div", s2, [
++    return (y, g) => (l(), u("div", s2, [
+       a("button", {
+         class: "vp-button",
+-        "aria-label": l.isMuted || l.volume === 0 ? "Unmute" : "Mute",
++        "aria-label": n.isMuted || n.volume === 0 ? "Unmute" : "Mute",
+         onClick: g[0] || (g[0] = (o) => i("toggleMute"))
+       }, [
+-        l.isMuted || l.volume === 0 ? (r(), x(r2, { key: 0 })) : l.volume <= 0.5 ? (r(), x(e2, { key: 1 })) : (r(), x(G1, { key: 2 }))
++        n.isMuted || n.volume === 0 ? (l(), x(r2, { key: 0 })) : n.volume <= 0.5 ? (l(), x(e2, { key: 1 })) : (l(), x(G1, { key: 2 }))
+       ], 8, a2),
+       a("input", {
+         class: "vp-volume-slider",
+@@ -495,8 +495,8 @@ const r2 = /* @__PURE__ */ P(t2, [["render", l2]]), s2 = { class: "vp-volume" },
+         min: "0",
+         max: "1",
+         step: "0.02",
+-        value: l.isMuted ? 0 : l.volume,
+-        onInput: v
++        value: n.isMuted ? 0 : n.volume,
++        onInput: p
+       }, null, 40, i2)
+     ]));
+   }
+@@ -507,12 +507,12 @@ const r2 = /* @__PURE__ */ P(t2, [["render", l2]]), s2 = { class: "vp-volume" },
+   xmlns: "http://www.w3.org/2000/svg",
+   "aria-hidden": "true"
+ };
+-function c2(l, e) {
+-  return r(), u("svg", C2, [...e[0] || (e[0] = [
++function c2(n, e) {
++  return l(), u("svg", C2, [...e[0] || (e[0] = [
+     c1('<path d="M5.25 16C5.25 15.5858 5.58579 15.25 6 15.25H10C10.4142 15.25 10.75 15.5858 10.75 16C10.75 16.4142 10.4142 16.75 10 16.75H6C5.58579 16.75 5.25 16.4142 5.25 16Z" fill="currentColor"></path><path d="M18 12.25C18.4142 12.25 18.75 12.5858 18.75 13C18.75 13.4142 18.4142 13.75 18 13.75H14C13.5858 13.75 13.25 13.4142 13.25 13C13.25 12.5858 13.5858 12.25 14 12.25H18Z" fill="currentColor"></path><path d="M11.75 16C11.75 15.5858 12.0858 15.25 12.5 15.25H14C14.4142 15.25 14.75 15.5858 14.75 16C14.75 16.4142 14.4142 16.75 14 16.75H12.5C12.0858 16.75 11.75 16.4142 11.75 16Z" fill="currentColor"></path><path d="M11.5 12.25C11.9142 12.25 12.25 12.5858 12.25 13C12.25 13.4142 11.9142 13.75 11.5 13.75H9.5C9.08579 13.75 8.75 13.4142 8.75 13C8.75 12.5858 9.08579 12.25 9.5 12.25H11.5Z" fill="currentColor"></path><path d="M15.75 16C15.75 15.5858 16.0858 15.25 16.5 15.25H18C18.4142 15.25 18.75 15.5858 18.75 16C18.75 16.4142 18.4142 16.75 18 16.75H16.5C16.0858 16.75 15.75 16.4142 15.75 16Z" fill="currentColor"></path><path d="M7 12.25C7.41421 12.25 7.75 12.5858 7.75 13C7.75 13.4142 7.41421 13.75 7 13.75H6C5.58579 13.75 5.25 13.4142 5.25 13C5.25 12.5858 5.58579 12.25 6 12.25H7Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M9.94358 3.25H14.0564C15.8942 3.24998 17.3498 3.24997 18.489 3.40314C19.6614 3.56076 20.6104 3.89288 21.3588 4.64124C22.1071 5.38961 22.4392 6.33856 22.5969 7.51098C22.75 8.65018 22.75 10.1058 22.75 11.9435V12.0564C22.75 13.8942 22.75 15.3498 22.5969 16.489C22.4392 17.6614 22.1071 18.6104 21.3588 19.3588C20.6104 20.1071 19.6614 20.4392 18.489 20.5969C17.3498 20.75 15.8942 20.75 14.0565 20.75H9.94359C8.10585 20.75 6.65018 20.75 5.51098 20.5969C4.33856 20.4392 3.38961 20.1071 2.64124 19.3588C1.89288 18.6104 1.56076 17.6614 1.40314 16.489C1.24997 15.3498 1.24998 13.8942 1.25 12.0564V11.9436C1.24998 10.1058 1.24997 8.65019 1.40314 7.51098C1.56076 6.33856 1.89288 5.38961 2.64124 4.64124C3.38961 3.89288 4.33856 3.56076 5.51098 3.40314C6.65019 3.24997 8.10583 3.24998 9.94358 3.25ZM5.71085 4.88976C4.70476 5.02502 4.12511 5.27869 3.7019 5.7019C3.27869 6.12511 3.02502 6.70476 2.88976 7.71085C2.75159 8.73851 2.75 10.0932 2.75 12C2.75 13.9068 2.75159 15.2615 2.88976 16.2892C3.02502 17.2952 3.27869 17.8749 3.7019 18.2981C4.12511 18.7213 4.70476 18.975 5.71085 19.1102C6.73851 19.2484 8.09318 19.25 10 19.25H14C15.9068 19.25 17.2615 19.2484 18.2892 19.1102C19.2952 18.975 19.8749 18.7213 20.2981 18.2981C20.7213 17.8749 20.975 17.2952 21.1102 16.2892C21.2484 15.2615 21.25 13.9068 21.25 12C21.25 10.0932 21.2484 8.73851 21.1102 7.71085C20.975 6.70476 20.7213 6.12511 20.2981 5.7019C19.8749 5.27869 19.2952 5.02502 18.2892 4.88976C17.2615 4.75159 15.9068 4.75 14 4.75H10C8.09318 4.75 6.73851 4.75159 5.71085 4.88976Z" fill="currentColor"></path>', 7)
+   ])]);
+ }
+-const d2 = /* @__PURE__ */ P(u2, [["render", c2]]), v2 = {}, p2 = {
++const d2 = /* @__PURE__ */ E(u2, [["render", c2]]), v2 = {}, p2 = {
+   xmlns: "http://www.w3.org/2000/svg",
+   width: "24",
+   height: "24",
+@@ -523,12 +523,12 @@ const d2 = /* @__PURE__ */ P(u2, [["render", c2]]), v2 = {}, p2 = {
+   "stroke-linecap": "round",
+   "stroke-linejoin": "round"
+ };
+-function f2(l, e) {
+-  return r(), u("svg", p2, [...e[0] || (e[0] = [
++function f2(n, e) {
++  return l(), u("svg", p2, [...e[0] || (e[0] = [
+     a("path", { d: "M20 6 9 17l-5-5" }, null, -1)
+   ])]);
+ }
+-const l1 = /* @__PURE__ */ P(v2, [["render", f2]]), m2 = {
++const l1 = /* @__PURE__ */ E(v2, [["render", f2]]), m2 = {
+   key: 1,
+   class: "vp-quality-check"
+ }, g2 = ["onClick"], y2 = {
+@@ -541,60 +541,60 @@ const l1 = /* @__PURE__ */ P(v2, [["render", f2]]), m2 = {
+     currentTrack: {}
+   },
+   emits: ["setTrack"],
+-  setup(l, { emit: e }) {
+-    const i = l, v = e, h = k(!1), g = k(null);
++  setup(n, { emit: e }) {
++    const i = n, p = e, y = b(!1), g = b(null);
+     function o() {
+-      h.value = !1;
++      y.value = !1;
+     }
+-    function d(V) {
++    function v(V) {
+       return i.currentTrack !== null && i.currentTrack.language === V.language && i.currentTrack.label === V.label;
+     }
+     function T(V) {
+-      v("setTrack", V), o();
++      p("setTrack", V), o();
+     }
+     function R(V) {
+       g.value && !g.value.contains(V.target) && o();
+     }
+-    return r1(() => document.addEventListener("click", R)), s1(() => document.removeEventListener("click", R)), (V, w) => (r(), u("div", {
++    return r1(() => document.addEventListener("click", R)), s1(() => document.removeEventListener("click", R)), (V, L) => (l(), u("div", {
+       ref_key: "wrapRef",
+       ref: g,
+       class: "vp-menu-wrap",
+       onKeydown: d1(o, ["escape"])
+     }, [
+       a("button", {
+-        class: N(["vp-button", { "vp-menu-open": h.value, "vp-captions-active": l.currentTrack !== null }]),
++        class: N(["vp-button", { "vp-menu-open": y.value, "vp-captions-active": n.currentTrack !== null }]),
+         "aria-label": "Subtitles",
+-        onClick: w[0] || (w[0] = n1((H) => h.value ? o() : h.value = !0, ["stop"]))
++        onClick: L[0] || (L[0] = n1((H) => y.value ? o() : y.value = !0, ["stop"]))
+       }, [
+         M(d2)
+       ], 2),
+       M(e1, { name: "vp-popup" }, {
+         default: W(() => [
+-          h.value ? (r(), u("div", {
++          y.value ? (l(), u("div", {
+             key: 0,
+             class: "vp-menu",
+-            onClick: w[2] || (w[2] = n1(() => {
++            onClick: L[2] || (L[2] = n1(() => {
+             }, ["stop"]))
+           }, [
+             a("button", {
+-              class: N(["vp-quality-option", { "vp-active": l.currentTrack === null }]),
+-              onClick: w[1] || (w[1] = (H) => T(null))
++              class: N(["vp-quality-option", { "vp-active": n.currentTrack === null }]),
++              onClick: L[1] || (L[1] = (H) => T(null))
+             }, [
+-              l.currentTrack === null ? (r(), x(l1, {
++              n.currentTrack === null ? (l(), x(l1, {
+                 key: 0,
+                 class: "vp-quality-check"
+-              })) : (r(), u("span", m2)),
+-              w[3] || (w[3] = a("span", { class: "vp-quality-label" }, "Off", -1))
++              })) : (l(), u("span", m2)),
++              L[3] || (L[3] = a("span", { class: "vp-quality-label" }, "Off", -1))
+             ], 2),
+-            (r(!0), u(X, null, J(l.tracks, (H) => (r(), u("button", {
++            (l(!0), u(X, null, J(n.tracks, (H) => (l(), u("button", {
+               key: H.language + H.label,
+-              class: N(["vp-quality-option", { "vp-active": d(H) }]),
++              class: N(["vp-quality-option", { "vp-active": v(H) }]),
+               onClick: (t) => T(H)
+             }, [
+-              d(H) ? (r(), x(l1, {
++              v(H) ? (l(), x(l1, {
+                 key: 0,
+                 class: "vp-quality-check"
+-              })) : (r(), u("span", y2)),
++              })) : (l(), u("span", y2)),
+               a("span", h2, q(H.label), 1)
+             ], 10, g2))), 128))
+           ])) : I("", !0)
+@@ -610,8 +610,8 @@ const l1 = /* @__PURE__ */ P(v2, [["render", f2]]), m2 = {
+   xmlns: "http://www.w3.org/2000/svg",
+   "aria-hidden": "true"
+ };
+-function L2(l, e) {
+-  return r(), u("svg", w2, [...e[0] || (e[0] = [
++function L2(n, e) {
++  return l(), u("svg", w2, [...e[0] || (e[0] = [
+     a("path", {
+       "fill-rule": "evenodd",
+       "clip-rule": "evenodd",
+@@ -620,15 +620,15 @@ function L2(l, e) {
+     }, null, -1)
+   ])]);
+ }
+-const _2 = /* @__PURE__ */ P(b2, [["render", L2]]), $2 = {}, M2 = {
++const _2 = /* @__PURE__ */ E(b2, [["render", L2]]), $2 = {}, M2 = {
+   class: "vp-svg-icon",
+   viewBox: "0 0 24 24",
+   fill: "none",
+   xmlns: "http://www.w3.org/2000/svg",
+   "aria-hidden": "true"
+ };
+-function x2(l, e) {
+-  return r(), u("svg", M2, [...e[0] || (e[0] = [
++function x2(n, e) {
++  return l(), u("svg", M2, [...e[0] || (e[0] = [
+     a("path", {
+       "fill-rule": "evenodd",
+       "clip-rule": "evenodd",
+@@ -637,20 +637,20 @@ function x2(l, e) {
+     }, null, -1)
+   ])]);
+ }
+-const E2 = /* @__PURE__ */ P($2, [["render", x2]]), P2 = ["aria-label"], T2 = /* @__PURE__ */ U({
++const P2 = /* @__PURE__ */ E($2, [["render", x2]]), E2 = ["aria-label"], T2 = /* @__PURE__ */ U({
+   __name: "VpPiPButton",
+   props: {
+     isPiP: { type: Boolean }
+   },
+   emits: ["click"],
+-  setup(l) {
+-    return (e, i) => (r(), u("button", {
++  setup(n) {
++    return (e, i) => (l(), u("button", {
+       class: "vp-button vp-pip-button",
+-      "aria-label": l.isPiP ? "Exit Picture-in-Picture" : "Picture-in-Picture",
+-      onClick: i[0] || (i[0] = (v) => e.$emit("click"))
++      "aria-label": n.isPiP ? "Exit Picture-in-Picture" : "Picture-in-Picture",
++      onClick: i[0] || (i[0] = (p) => e.$emit("click"))
+     }, [
+-      l.isPiP ? (r(), x(E2, { key: 0 })) : (r(), x(_2, { key: 1 }))
+-    ], 8, P2));
++      n.isPiP ? (l(), x(P2, { key: 0 })) : (l(), x(_2, { key: 1 }))
++    ], 8, E2));
+   }
+ }), V2 = {}, H2 = {
+   class: "vp-svg-icon",
+@@ -659,8 +659,8 @@ const E2 = /* @__PURE__ */ P($2, [["render", x2]]), P2 = ["aria-label"], T2 = /*
+   xmlns: "http://www.w3.org/2000/svg",
+   "aria-hidden": "true"
+ };
+-function S2(l, e) {
+-  return r(), u("svg", H2, [...e[0] || (e[0] = [
++function S2(n, e) {
++  return l(), u("svg", H2, [...e[0] || (e[0] = [
+     a("path", {
+       "fill-rule": "evenodd",
+       "clip-rule": "evenodd",
+@@ -669,15 +669,15 @@ function S2(l, e) {
+     }, null, -1)
+   ])]);
+ }
+-const Z2 = /* @__PURE__ */ P(V2, [["render", S2]]), B2 = {}, R2 = {
++const Z2 = /* @__PURE__ */ E(V2, [["render", S2]]), B2 = {}, R2 = {
+   class: "vp-svg-icon",
+   viewBox: "0 0 24 24",
+   fill: "none",
+   xmlns: "http://www.w3.org/2000/svg",
+   "aria-hidden": "true"
+ };
+-function F2(l, e) {
+-  return r(), u("svg", R2, [...e[0] || (e[0] = [
++function F2(n, e) {
++  return l(), u("svg", R2, [...e[0] || (e[0] = [
+     a("path", {
+       "fill-rule": "evenodd",
+       "clip-rule": "evenodd",
+@@ -686,19 +686,19 @@ function F2(l, e) {
+     }, null, -1)
+   ])]);
+ }
+-const I2 = /* @__PURE__ */ P(B2, [["render", F2]]), Q2 = ["aria-label"], A2 = /* @__PURE__ */ U({
++const I2 = /* @__PURE__ */ E(B2, [["render", F2]]), Q2 = ["aria-label"], A2 = /* @__PURE__ */ U({
+   __name: "VpFullscreenButton",
+   props: {
+     isFullscreen: { type: Boolean }
+   },
+   emits: ["click"],
+-  setup(l) {
+-    return (e, i) => (r(), u("button", {
++  setup(n) {
++    return (e, i) => (l(), u("button", {
+       class: "vp-button",
+-      "aria-label": l.isFullscreen ? "Exit fullscreen" : "Fullscreen",
+-      onClick: i[0] || (i[0] = (v) => e.$emit("click"))
++      "aria-label": n.isFullscreen ? "Exit fullscreen" : "Fullscreen",
++      onClick: i[0] || (i[0] = (p) => e.$emit("click"))
+     }, [
+-      l.isFullscreen ? (r(), x(I2, { key: 0 })) : (r(), x(Z2, { key: 1 }))
++      n.isFullscreen ? (l(), x(I2, { key: 0 })) : (l(), x(Z2, { key: 1 }))
+     ], 8, Q2));
+   }
+ }), q2 = {}, D2 = {
+@@ -708,8 +708,8 @@ const I2 = /* @__PURE__ */ P(B2, [["render", F2]]), Q2 = ["aria-label"], A2 = /*
+   xmlns: "http://www.w3.org/2000/svg",
+   "aria-hidden": "true"
+ };
+-function N2(l, e) {
+-  return r(), u("svg", D2, [...e[0] || (e[0] = [
++function N2(n, e) {
++  return l(), u("svg", D2, [...e[0] || (e[0] = [
+     a("path", {
+       "fill-rule": "evenodd",
+       "clip-rule": "evenodd",
+@@ -724,15 +724,15 @@ function N2(l, e) {
+     }, null, -1)
+   ])]);
+ }
+-const O2 = /* @__PURE__ */ P(q2, [["render", N2]]), K2 = {}, U2 = {
++const O2 = /* @__PURE__ */ E(q2, [["render", N2]]), K2 = {}, U2 = {
+   class: "vp-svg-icon",
+   viewBox: "0 0 24 24",
+   fill: "none",
+   xmlns: "http://www.w3.org/2000/svg",
+   "aria-hidden": "true"
+ };
+-function z2(l, e) {
+-  return r(), u("svg", U2, [...e[0] || (e[0] = [
++function z2(n, e) {
++  return l(), u("svg", U2, [...e[0] || (e[0] = [
+     a("path", {
+       "fill-rule": "evenodd",
+       "clip-rule": "evenodd",
+@@ -741,15 +741,15 @@ function z2(l, e) {
+     }, null, -1)
+   ])]);
+ }
+-const j2 = /* @__PURE__ */ P(K2, [["render", z2]]), W2 = {}, G2 = {
++const j2 = /* @__PURE__ */ E(K2, [["render", z2]]), W2 = {}, G2 = {
+   class: "vp-svg-icon",
+   viewBox: "0 0 24 24",
+   fill: "none",
+   xmlns: "http://www.w3.org/2000/svg",
+   "aria-hidden": "true"
+ };
+-function X2(l, e) {
+-  return r(), u("svg", G2, [...e[0] || (e[0] = [
++function X2(n, e) {
++  return l(), u("svg", G2, [...e[0] || (e[0] = [
+     a("path", {
+       "fill-rule": "evenodd",
+       "clip-rule": "evenodd",
+@@ -758,15 +758,15 @@ function X2(l, e) {
+     }, null, -1)
+   ])]);
+ }
+-const u1 = /* @__PURE__ */ P(W2, [["render", X2]]), J2 = {}, Y2 = {
++const u1 = /* @__PURE__ */ E(W2, [["render", X2]]), J2 = {}, Y2 = {
+   class: "vp-svg-icon",
+   viewBox: "0 0 24 24",
+   fill: "none",
+   xmlns: "http://www.w3.org/2000/svg",
+   "aria-hidden": "true"
+ };
+-function e5(l, e) {
+-  return r(), u("svg", Y2, [...e[0] || (e[0] = [
++function e5(n, e) {
++  return l(), u("svg", Y2, [...e[0] || (e[0] = [
+     a("path", {
+       "fill-rule": "evenodd",
+       "clip-rule": "evenodd",
+@@ -775,27 +775,27 @@ function e5(l, e) {
+     }, null, -1)
+   ])]);
+ }
+-const C1 = /* @__PURE__ */ P(J2, [["render", e5]]), t5 = {}, n5 = {
++const C1 = /* @__PURE__ */ E(J2, [["render", e5]]), t5 = {}, n5 = {
+   class: "vp-svg-icon",
+   viewBox: "0 0 24 24",
+   fill: "none",
+   xmlns: "http://www.w3.org/2000/svg",
+   "aria-hidden": "true"
+ };
+-function l5(l, e) {
+-  return r(), u("svg", n5, [...e[0] || (e[0] = [
++function l5(n, e) {
++  return l(), u("svg", n5, [...e[0] || (e[0] = [
+     c1('<path fill-rule="evenodd" clip-rule="evenodd" d="M7.25 16C7.25 14.4812 8.48122 13.25 10 13.25C11.5188 13.25 12.75 14.4812 12.75 16C12.75 17.5188 11.5188 18.75 10 18.75C8.48122 18.75 7.25 17.5188 7.25 16ZM10 14.75C9.30964 14.75 8.75 15.3096 8.75 16C8.75 16.6904 9.30964 17.25 10 17.25C10.6904 17.25 11.25 16.6904 11.25 16C11.25 15.3096 10.6904 14.75 10 14.75Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M16.75 8C16.75 9.51878 15.5188 10.75 14 10.75C12.4812 10.75 11.25 9.51878 11.25 8C11.25 6.48122 12.4812 5.25 14 5.25C15.5188 5.25 16.75 6.48122 16.75 8ZM14 9.25C14.6904 9.25 15.25 8.69036 15.25 8C15.25 7.30964 14.6904 6.75 14 6.75C13.3096 6.75 12.75 7.30964 12.75 8C12.75 8.69036 13.3096 9.25 14 9.25Z" fill="currentColor"></path><path d="M13.25 16C13.25 15.5858 13.5858 15.25 14 15.25H19C19.4142 15.25 19.75 15.5858 19.75 16C19.75 16.4142 19.4142 16.75 19 16.75H14C13.5858 16.75 13.25 16.4142 13.25 16Z" fill="currentColor"></path><path d="M10 7.25C10.4142 7.25 10.75 7.58579 10.75 8C10.75 8.41421 10.4142 8.75 10 8.75H5C4.58579 8.75 4.25 8.41421 4.25 8C4.25 7.58579 4.58579 7.25 5 7.25H10Z" fill="currentColor"></path><path d="M4.25 16C4.25 15.5858 4.58579 15.25 5 15.25H6C6.41421 15.25 6.75 15.5858 6.75 16C6.75 16.4142 6.41421 16.75 6 16.75H5C4.58579 16.75 4.25 16.4142 4.25 16Z" fill="currentColor"></path><path d="M19 7.25C19.4142 7.25 19.75 7.58579 19.75 8C19.75 8.41421 19.4142 8.75 19 8.75H18C17.5858 8.75 17.25 8.41421 17.25 8C17.25 7.58579 17.5858 7.25 18 7.25H19Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M11.9426 1.25H12.0574C14.3658 1.24999 16.1748 1.24998 17.5863 1.43975C19.031 1.63399 20.1711 2.03933 21.0659 2.93414C21.9607 3.82895 22.366 4.96897 22.5603 6.41371C22.75 7.82519 22.75 9.63423 22.75 11.9426V12.0574C22.75 14.3658 22.75 16.1748 22.5603 17.5863C22.366 19.031 21.9607 20.1711 21.0659 21.0659C20.1711 21.9607 19.031 22.366 17.5863 22.5603C16.1748 22.75 14.3658 22.75 12.0574 22.75H11.9426C9.63423 22.75 7.82519 22.75 6.41371 22.5603C4.96897 22.366 3.82895 21.9607 2.93414 21.0659C2.03933 20.1711 1.63399 19.031 1.43975 17.5863C1.24998 16.1748 1.24999 14.3658 1.25 12.0574V11.9426C1.24999 9.63423 1.24998 7.82519 1.43975 6.41371C1.63399 4.96897 2.03933 3.82895 2.93414 2.93414C3.82895 2.03933 4.96897 1.63399 6.41371 1.43975C7.82519 1.24998 9.63423 1.24999 11.9426 1.25ZM6.61358 2.92637C5.33517 3.09825 4.56445 3.42514 3.9948 3.9948C3.42514 4.56445 3.09825 5.33517 2.92637 6.61358C2.75159 7.91356 2.75 9.62178 2.75 12C2.75 14.3782 2.75159 16.0864 2.92637 17.3864C3.09825 18.6648 3.42514 19.4355 3.9948 20.0052C4.56445 20.5749 5.33517 20.9018 6.61358 21.0736C7.91356 21.2484 9.62178 21.25 12 21.25C14.3782 21.25 16.0864 21.2484 17.3864 21.0736C18.6648 20.9018 19.4355 20.5749 20.0052 20.0052C20.5749 19.4355 20.9018 18.6648 21.0736 17.3864C21.2484 16.0864 21.25 14.3782 21.25 12C21.25 9.62178 21.2484 7.91356 21.0736 6.61358C20.9018 5.33517 20.5749 4.56445 20.0052 3.9948C19.4355 3.42514 18.6648 3.09825 17.3864 2.92637C16.0864 2.75159 14.3782 2.75 12 2.75C9.62178 2.75 7.91356 2.75159 6.61358 2.92637Z" fill="currentColor"></path>', 7)
+   ])]);
+ }
+-const r5 = /* @__PURE__ */ P(t5, [["render", l5]]), s5 = {}, a5 = {
++const r5 = /* @__PURE__ */ E(t5, [["render", l5]]), s5 = {}, a5 = {
+   class: "vp-svg-icon",
+   viewBox: "0 0 24 24",
+   fill: "none",
+   xmlns: "http://www.w3.org/2000/svg",
+   "aria-hidden": "true"
+ };
+-function i5(l, e) {
+-  return r(), u("svg", a5, [...e[0] || (e[0] = [
++function i5(n, e) {
++  return l(), u("svg", a5, [...e[0] || (e[0] = [
+     a("path", {
+       "fill-rule": "evenodd",
+       "clip-rule": "evenodd",
+@@ -804,15 +804,15 @@ function i5(l, e) {
+     }, null, -1)
+   ])]);
+ }
+-const o5 = /* @__PURE__ */ P(s5, [["render", i5]]), u5 = {}, C5 = {
++const o5 = /* @__PURE__ */ E(s5, [["render", i5]]), u5 = {}, C5 = {
+   class: "vp-svg-icon",
+   viewBox: "0 0 24 24",
+   fill: "none",
+   xmlns: "http://www.w3.org/2000/svg",
+   "aria-hidden": "true"
+ };
+-function c5(l, e) {
+-  return r(), u("svg", C5, [...e[0] || (e[0] = [
++function c5(n, e) {
++  return l(), u("svg", C5, [...e[0] || (e[0] = [
+     a("path", {
+       "fill-rule": "evenodd",
+       "clip-rule": "evenodd",
+@@ -821,7 +821,7 @@ function c5(l, e) {
+     }, null, -1)
+   ])]);
+ }
+-const d5 = /* @__PURE__ */ P(u5, [["render", c5]]), v5 = {
++const d5 = /* @__PURE__ */ E(u5, [["render", c5]]), v5 = {
+   key: "main",
+   class: "vp-settings-panel"
+ }, p5 = { class: "vp-settings-row-value" }, f5 = { class: "vp-settings-row-value" }, m5 = {
+@@ -836,7 +836,7 @@ const d5 = /* @__PURE__ */ P(u5, [["render", c5]]), v5 = {
+ }, k5 = { class: "vp-quality-label" }, b5 = {
+   key: "speed",
+   class: "vp-settings-panel"
+-}, w5 = { class: "vp-speed-current-value" }, L5 = { class: "vp-speed-track" }, _5 = ["disabled"], $5 = { class: "vp-cslider" }, M5 = ["value"], x5 = ["disabled"], E5 = { class: "vp-speed-badges" }, P5 = ["onClick"], T5 = /* @__PURE__ */ U({
++}, w5 = { class: "vp-speed-current-value" }, L5 = { class: "vp-speed-track" }, _5 = ["disabled"], $5 = { class: "vp-cslider" }, M5 = ["value"], x5 = ["disabled"], P5 = { class: "vp-speed-badges" }, E5 = ["onClick"], T5 = /* @__PURE__ */ U({
+   __name: "VpSettingsButton",
+   props: {
+     playbackRate: {},
+@@ -846,114 +846,114 @@ const d5 = /* @__PURE__ */ P(u5, [["render", c5]]), v5 = {
+     isFullscreen: { type: Boolean }
+   },
+   emits: ["setSpeed", "setQuality"],
+-  setup(l, { emit: e }) {
+-    const i = l, v = e, h = [1, 1.25, 1.5, 1.75, 2], g = k(!1), o = k("main"), d = k("fwd"), T = k(null), R = k(null), V = k(null), w = k({ bottom: "0px", right: "0px" });
++  setup(n, { emit: e }) {
++    const i = n, p = e, y = [1, 1.25, 1.5, 1.75, 2], g = b(!1), o = b("main"), v = b("fwd"), T = b(null), R = b(null), V = b(null), L = b({ bottom: "0px", right: "0px" });
+     function H() {
+-      const p = R.value;
+-      if (!p) return;
+-      const n = p.getBoundingClientRect();
+-      w.value = {
+-        bottom: `${window.innerHeight - n.top + 8}px`,
+-        right: `${window.innerWidth - n.right}px`
++      const f = R.value;
++      if (!f) return;
++      const C = f.getBoundingClientRect();
++      L.value = {
++        bottom: `${window.innerHeight - C.top + 8}px`,
++        right: `${window.innerWidth - C.right}px`
+       };
+     }
+-    F(g, (p) => {
+-      p && H();
++    F(g, (f) => {
++      f && H();
+     });
+-    const t = k(i.playbackRate);
+-    let C = null;
++    const t = b(i.playbackRate);
++    let c = null;
+     F(
+       () => i.playbackRate,
+-      (p) => {
+-        t.value = p;
++      (f) => {
++        t.value = f;
+       }
+     );
+-    function E(p) {
+-      return `${p}×`;
++    function P(f) {
++      return `${f}×`;
+     }
+-    function b(p) {
+-      return p === "auto" ? "Auto" : `${p}p`;
++    function w(f) {
++      return f === "auto" ? "Auto" : `${f}p`;
+     }
+-    function L() {
++    function _() {
+       g.value = !1, o.value = "main";
+     }
+-    async function S(p) {
+-      d.value = p === "main" ? "bck" : "fwd";
+-      const n = V.value;
+-      if (!n) {
+-        o.value = p;
++    async function S(f) {
++      v.value = f === "main" ? "bck" : "fwd";
++      const C = V.value;
++      if (!C) {
++        o.value = f;
+         return;
+       }
+-      const c = n.offsetHeight;
+-      o.value = p, await h1(), n.style.height = "auto";
+-      const y = n.offsetHeight;
+-      n.style.height = c + "px", n.offsetHeight, n.style.height = y + "px";
+-      const s = (f) => {
+-        f.propertyName !== "height" || f.target !== n || (n.style.height = "", n.removeEventListener("transitionend", s));
++      const r = C.offsetHeight;
++      o.value = f, await h1(), C.style.height = "auto";
++      const h = C.offsetHeight;
++      C.style.height = r + "px", C.offsetHeight, C.style.height = h + "px";
++      const s = (d) => {
++        d.propertyName !== "height" || d.target !== C || (C.style.height = "", C.removeEventListener("transitionend", s));
+       };
+-      n.addEventListener("transitionend", s);
++      C.addEventListener("transitionend", s);
+     }
+-    function $(p) {
+-      return Math.round(Math.max(0.25, Math.min(3, p)) * 100) / 100;
++    function $(f) {
++      return Math.round(Math.max(0.25, Math.min(3, f)) * 100) / 100;
+     }
+-    function Z(p) {
+-      v("setSpeed", $(p));
++    function Z(f) {
++      p("setSpeed", $(f));
+     }
+-    function z(p) {
+-      const n = $(Number(p.target.value));
+-      t.value = n, v("setSpeed", n);
++    function z(f) {
++      const C = $(Number(f.target.value));
++      t.value = C, p("setSpeed", C);
+     }
+-    function D(p) {
+-      C !== null && cancelAnimationFrame(C);
+-      const n = t.value, c = performance.now(), y = 220;
+-      function s(f) {
+-        const _ = Math.min((f - c) / y, 1), B = 1 - Math.pow(1 - _, 3);
+-        t.value = n + (p - n) * B, _ < 1 ? C = requestAnimationFrame(s) : (t.value = p, C = null);
++    function D(f) {
++      c !== null && cancelAnimationFrame(c);
++      const C = t.value, r = performance.now(), h = 220;
++      function s(d) {
++        const k = Math.min((d - r) / h, 1), B = 1 - Math.pow(1 - k, 3);
++        t.value = C + (f - C) * B, k < 1 ? c = requestAnimationFrame(s) : (t.value = f, c = null);
+       }
+-      C = requestAnimationFrame(s);
++      c = requestAnimationFrame(s);
+     }
+-    function G(p) {
+-      D(p), v("setSpeed", p);
++    function G(f) {
++      D(f), p("setSpeed", f);
+     }
+     function Q() {
+       return (t.value - 0.25) / (3 - 0.25) * 100;
+     }
+-    function j(p) {
+-      v("setQuality", p), L();
++    function j(f) {
++      p("setQuality", f), _();
+     }
+-    function O(p) {
+-      T.value && !T.value.contains(p.target) && L();
++    function O(f) {
++      T.value && !T.value.contains(f.target) && _();
+     }
+     return r1(() => document.addEventListener("click", O)), s1(() => {
+-      document.removeEventListener("click", O), C !== null && cancelAnimationFrame(C);
+-    }), (p, n) => (r(), u("div", {
++      document.removeEventListener("click", O), c !== null && cancelAnimationFrame(c);
++    }), (f, C) => (l(), u("div", {
+       ref_key: "wrapRef",
+       ref: T,
+       class: "vp-menu-wrap",
+-      onKeydown: d1(L, ["escape"])
++      onKeydown: d1(_, ["escape"])
+     }, [
+       a("button", {
+         ref_key: "btnRef",
+         ref: R,
+         class: N(["vp-button", { "vp-menu-open": g.value }]),
+         "aria-label": "Settings",
+-        onClick: n[0] || (n[0] = n1((c) => g.value ? L() : g.value = !0, ["stop"]))
++        onClick: C[0] || (C[0] = n1((r) => g.value ? _() : g.value = !0, ["stop"]))
+       }, [
+         M(O2, {
+           class: N(["vp-settings-icon", { "vp-settings-icon--open": g.value }])
+         }, null, 8, ["class"])
+       ], 2),
+-      (r(), x(y1, {
++      (l(), x(y1, {
+         to: "body",
+         disabled: i.isFullscreen
+       }, [
+         M(e1, { name: "vp-popup" }, {
+           default: W(() => [
+-            g.value ? (r(), u("div", {
++            g.value ? (l(), u("div", {
+               key: 0,
+               class: "vp-menu vp-settings-menu",
+-              style: K(i.isFullscreen ? void 0 : { position: "fixed", bottom: w.value.bottom, right: w.value.right }),
+-              onClick: n[8] || (n[8] = n1(() => {
++              style: K(i.isFullscreen ? void 0 : { position: "fixed", bottom: L.value.bottom, right: L.value.right }),
++              onClick: C[8] || (C[8] = n1(() => {
+               }, ["stop"]))
+             }, [
+               a("div", {
+@@ -962,77 +962,77 @@ const d5 = /* @__PURE__ */ P(u5, [["render", c5]]), v5 = {
+                 class: "vp-settings-body"
+               }, [
+                 M(e1, {
+-                  name: `vp-slide-${d.value}`
++                  name: `vp-slide-${v.value}`
+                 }, {
+                   default: W(() => [
+-                    o.value === "main" ? (r(), u("div", v5, [
+-                      l.availableQualities.length > 0 ? (r(), u("button", {
++                    o.value === "main" ? (l(), u("div", v5, [
++                      n.availableQualities.length > 0 ? (l(), u("button", {
+                         key: 0,
+                         class: "vp-settings-row",
+-                        onClick: n[1] || (n[1] = (c) => S("quality"))
++                        onClick: C[1] || (C[1] = (r) => S("quality"))
+                       }, [
+                         M(r5, { class: "vp-settings-row-icon" }),
+-                        n[9] || (n[9] = a("span", { class: "vp-settings-row-label" }, "Quality", -1)),
+-                        a("span", p5, q(b(l.currentQuality)), 1),
++                        C[9] || (C[9] = a("span", { class: "vp-settings-row-label" }, "Quality", -1)),
++                        a("span", p5, q(w(n.currentQuality)), 1),
+                         M(u1, { class: "vp-settings-row-arrow" })
+                       ])) : I("", !0),
+                       a("button", {
+                         class: "vp-settings-row",
+-                        onClick: n[2] || (n[2] = (c) => S("speed"))
++                        onClick: C[2] || (C[2] = (r) => S("speed"))
+                       }, [
+                         M(j2, { class: "vp-settings-row-icon" }),
+-                        n[10] || (n[10] = a("span", { class: "vp-settings-row-label" }, "Playback speed", -1)),
+-                        a("span", f5, q(E(l.playbackRate)), 1),
++                        C[10] || (C[10] = a("span", { class: "vp-settings-row-label" }, "Playback speed", -1)),
++                        a("span", f5, q(P(n.playbackRate)), 1),
+                         M(u1, { class: "vp-settings-row-arrow" })
+                       ])
+-                    ])) : o.value === "quality" ? (r(), u("div", m5, [
++                    ])) : o.value === "quality" ? (l(), u("div", m5, [
+                       a("button", {
+                         class: "vp-settings-back",
+-                        onClick: n[3] || (n[3] = (c) => S("main"))
++                        onClick: C[3] || (C[3] = (r) => S("main"))
+                       }, [
+                         M(C1, { class: "vp-settings-back-icon" }),
+-                        n[11] || (n[11] = t1(" Quality ", -1))
++                        C[11] || (C[11] = t1(" Quality ", -1))
+                       ]),
+                       a("button", {
+-                        class: N(["vp-quality-option", { "vp-active": l.currentQuality === "auto" }]),
+-                        onClick: n[4] || (n[4] = (c) => j("auto"))
++                        class: N(["vp-quality-option", { "vp-active": n.currentQuality === "auto" }]),
++                        onClick: C[4] || (C[4] = (r) => j("auto"))
+                       }, [
+-                        l.currentQuality === "auto" ? (r(), x(l1, {
++                        n.currentQuality === "auto" ? (l(), x(l1, {
+                           key: 0,
+                           class: "vp-quality-check"
+-                        })) : (r(), u("span", g5)),
+-                        n[12] || (n[12] = a("span", { class: "vp-quality-label" }, "Auto", -1))
++                        })) : (l(), u("span", g5)),
++                        C[12] || (C[12] = a("span", { class: "vp-quality-label" }, "Auto", -1))
+                       ], 2),
+-                      (r(!0), u(X, null, J(l.availableQualities, (c) => (r(), u("button", {
+-                        key: c.value,
+-                        class: N(["vp-quality-option", { "vp-active": l.currentQuality === c.value }]),
+-                        onClick: (y) => j(c.value)
++                      (l(!0), u(X, null, J(n.availableQualities, (r) => (l(), u("button", {
++                        key: r.value,
++                        class: N(["vp-quality-option", { "vp-active": n.currentQuality === r.value }]),
++                        onClick: (h) => j(r.value)
+                       }, [
+-                        l.currentQuality === c.value ? (r(), x(l1, {
++                        n.currentQuality === r.value ? (l(), x(l1, {
+                           key: 0,
+                           class: "vp-quality-check"
+-                        })) : (r(), u("span", h5)),
+-                        a("span", k5, q(c.label), 1)
++                        })) : (l(), u("span", h5)),
++                        a("span", k5, q(r.label), 1)
+                       ], 10, y5))), 128))
+-                    ])) : (r(), u("div", b5, [
++                    ])) : (l(), u("div", b5, [
+                       a("button", {
+                         class: "vp-settings-back",
+-                        onClick: n[5] || (n[5] = (c) => S("main"))
++                        onClick: C[5] || (C[5] = (r) => S("main"))
+                       }, [
+                         M(C1, { class: "vp-settings-back-icon" }),
+-                        n[13] || (n[13] = t1(" Playback speed ", -1))
++                        C[13] || (C[13] = t1(" Playback speed ", -1))
+                       ]),
+-                      a("div", w5, q(E(l.playbackRate)), 1),
++                      a("div", w5, q(P(n.playbackRate)), 1),
+                       a("div", L5, [
+                         a("button", {
+                           class: "vp-button vp-step-button",
+-                          disabled: l.playbackRate <= 0.25,
+-                          onClick: n[6] || (n[6] = (c) => Z(l.playbackRate - 0.25))
++                          disabled: n.playbackRate <= 0.25,
++                          onClick: C[6] || (C[6] = (r) => Z(n.playbackRate - 0.25))
+                         }, [
+                           M(o5)
+                         ], 8, _5),
+                         a("div", $5, [
+-                          n[14] || (n[14] = a("div", { class: "vp-cslider-rail" }, null, -1)),
++                          C[14] || (C[14] = a("div", { class: "vp-cslider-rail" }, null, -1)),
+                           a("div", {
+                             class: "vp-cslider-fill",
+                             style: K({ width: Q() + "%" })
+@@ -1053,18 +1053,18 @@ const d5 = /* @__PURE__ */ P(u5, [["render", c5]]), v5 = {
+                         ]),
+                         a("button", {
+                           class: "vp-button vp-step-button",
+-                          disabled: l.playbackRate >= 3,
+-                          onClick: n[7] || (n[7] = (c) => Z(l.playbackRate + 0.25))
++                          disabled: n.playbackRate >= 3,
++                          onClick: C[7] || (C[7] = (r) => Z(n.playbackRate + 0.25))
+                         }, [
+                           M(d5)
+                         ], 8, x5)
+                       ]),
+-                      a("div", E5, [
+-                        (r(), u(X, null, J(h, (c) => a("button", {
+-                          key: c,
+-                          class: N(["vp-speed-badge", { "vp-active": l.playbackRate === c }]),
+-                          onClick: (y) => G(c)
+-                        }, q(E(c)), 11, P5)), 64))
++                      a("div", P5, [
++                        (l(), u(X, null, J(y, (r) => a("button", {
++                          key: r,
++                          class: N(["vp-speed-badge", { "vp-active": n.playbackRate === r }]),
++                          onClick: (h) => G(r)
++                        }, q(P(r)), 11, E5)), 64))
+                       ])
+                     ]))
+                   ]),
+@@ -1079,11 +1079,11 @@ const d5 = /* @__PURE__ */ P(u5, [["render", c5]]), v5 = {
+     ], 544));
+   }
+ }), V5 = {}, H5 = { class: "vp-overlay" };
+-function S5(l, e) {
+-  return r(), x(e1, { name: "vp-fade" }, {
++function S5(n, e) {
++  return l(), x(e1, { name: "vp-fade" }, {
+     default: W(() => [
+       a("div", H5, [
+-        Y(l.$slots, "default", {}, () => [
++        Y(n.$slots, "default", {}, () => [
+           e[0] || (e[0] = a("div", { class: "vp-spinner" }, null, -1))
+         ])
+       ])
+@@ -1091,15 +1091,15 @@ function S5(l, e) {
+     _: 3
+   });
+ }
+-const Z5 = /* @__PURE__ */ P(V5, [["render", S5]]), B5 = {}, R5 = {
++const Z5 = /* @__PURE__ */ E(V5, [["render", S5]]), B5 = {}, R5 = {
+   class: "vp-svg-icon",
+   viewBox: "0 0 24 24",
+   fill: "none",
+   xmlns: "http://www.w3.org/2000/svg",
+   "aria-hidden": "true"
+ };
+-function F5(l, e) {
+-  return r(), u("svg", R5, [...e[0] || (e[0] = [
++function F5(n, e) {
++  return l(), u("svg", R5, [...e[0] || (e[0] = [
+     a("path", {
+       d: "M12 7.25C12.4142 7.25 12.75 7.58579 12.75 8V13C12.75 13.4142 12.4142 13.75 12 13.75C11.5858 13.75 11.25 13.4142 11.25 13V8C11.25 7.58579 11.5858 7.25 12 7.25Z",
+       fill: "currentColor"
+@@ -1116,25 +1116,25 @@ function F5(l, e) {
+     }, null, -1)
+   ])]);
+ }
+-const I5 = /* @__PURE__ */ P(B5, [["render", F5]]), Q5 = { class: "vp-overlay" }, A5 = { class: "vp-error" }, q5 = { class: "vp-error-message" }, D5 = /* @__PURE__ */ U({
++const I5 = /* @__PURE__ */ E(B5, [["render", F5]]), Q5 = { class: "vp-overlay" }, A5 = { class: "vp-error" }, q5 = { class: "vp-error-message" }, D5 = /* @__PURE__ */ U({
+   __name: "VpErrorOverlay",
+   props: {
+     error: {}
+   },
+   emits: ["retry"],
+-  setup(l, { emit: e }) {
++  setup(n, { emit: e }) {
+     const i = e;
+-    return (v, h) => (r(), u("div", Q5, [
+-      Y(v.$slots, "default", {
+-        error: l.error,
++    return (p, y) => (l(), u("div", Q5, [
++      Y(p.$slots, "default", {
++        error: n.error,
+         retry: () => i("retry")
+       }, () => [
+         a("div", A5, [
+           M(I5, { class: "vp-error-icon" }),
+-          a("div", q5, q(l.error.message), 1),
++          a("div", q5, q(n.error.message), 1),
+           a("button", {
+             class: "vp-error-retry",
+-            onClick: h[0] || (h[0] = (g) => i("retry"))
++            onClick: y[0] || (y[0] = (g) => i("retry"))
+           }, "Try again")
+         ])
+       ])
+@@ -1167,177 +1167,180 @@ const I5 = /* @__PURE__ */ P(B5, [["render", F5]]), Q5 = { class: "vp-overlay" }
+     thumbnails: {}
+   },
+   emits: ["play", "pause", "ended", "timeUpdate", "buffering", "speedChange", "trackChange", "fullscreenChange", "error"],
+-  setup(l, { emit: e }) {
+-    const i = l, v = e, h = k(null), g = k(null), { state: o, controls: d, loadSource: T } = V1(g), R = k(!1), V = A(() => !!i.poster && !o.isPlaying && o.currentTime === 0), w = k([]);
++  setup(n, { emit: e }) {
++    const i = n, p = e, y = b(null), g = b(null), { state: o, controls: v, loadSource: T } = V1(g), R = b(!1), V = A(() => !!i.poster && !o.isPlaying && o.currentTime === 0), L = b([]);
+     function H() {
+-      const n = g.value, c = o.currentTrack;
+-      if (!n || !c) {
+-        w.value = [];
++      const r = g.value, h = o.currentTrack;
++      if (!r || !h) {
++        L.value = [];
+         return;
+       }
+-      for (const y of Array.from(n.querySelectorAll("track"))) {
+-        const s = y.track;
+-        if (s.language === c.language && s.label === c.label) {
+-          w.value = s.activeCues ? Array.from(s.activeCues).map((f) => f.text).filter(Boolean) : [];
++      for (const s of Array.from(r.querySelectorAll("track"))) {
++        const d = s.track;
++        if (d.language === h.language && d.label === h.label) {
++          L.value = d.activeCues ? Array.from(d.activeCues).map((k) => k.text).filter(Boolean) : [];
+           return;
+         }
+       }
+-      w.value = [];
++      L.value = [];
+     }
+     r1(() => {
+-      var n;
+-      R.value = x1(), i.src && T(i.src), (n = g.value) == null || n.addEventListener("timeupdate", H);
++      var r;
++      R.value = x1(), i.src && T(i.src), (r = g.value) == null || r.addEventListener("timeupdate", H);
+     }), F(
+       () => o.isLoading,
+-      (n) => {
+-        var y;
+-        if (n) return;
+-        const c = o.currentTrack ?? ((y = i.tracks) == null ? void 0 : y.find((s) => s.default)) ?? null;
+-        c && d.setTrack(c);
++      (r) => {
++        var s;
++        if (r) return;
++        const h = o.currentTrack ?? ((s = i.tracks) == null ? void 0 : s.find((d) => d.default)) ?? null;
++        h && v.setTrack(h);
+       }
+     ), s1(() => {
+-      var n;
+-      return (n = g.value) == null ? void 0 : n.removeEventListener("timeupdate", H);
++      var r;
++      return (r = g.value) == null ? void 0 : r.removeEventListener("timeupdate", H);
+     }), F(
+       () => i.src,
+-      (n) => {
+-        n && T(n);
++      (r) => {
++        r && T(r);
+       }
+     ), F(
+       () => o.isPlaying,
+-      (n) => v(n ? "play" : "pause")
++      (r) => p(r ? "play" : "pause")
+     ), F(
+       () => o.isEnded,
+-      (n) => {
+-        n && v("ended");
++      (r) => {
++        r && p("ended");
+       }
+     ), F(
+       () => o.currentTime,
+-      (n) => v("timeUpdate", n)
++      (r) => p("timeUpdate", r)
+     ), F(
+       () => o.isBuffering,
+-      (n) => v("buffering", n)
++      (r) => p("buffering", r)
+     ), F(
+       () => o.playbackRate,
+-      (n) => v("speedChange", n)
++      (r) => p("speedChange", r)
+     ), F(
+       () => o.currentTrack,
+-      (n) => v("trackChange", n)
++      (r) => p("trackChange", r)
+     ), F(
+       () => o.isFullscreen,
+-      (n) => v("fullscreenChange", n)
++      (r) => p("fullscreenChange", r)
+     ), F(
+       () => o.error,
+-      (n) => {
+-        n && v("error", n);
++      (r) => {
++        r && p("error", r);
+       }
+     );
+-    const t = k([]);
++    const t = b([]);
+     F(
+       () => i.thumbnails,
+-      async (n) => {
+-        t.value = n ? await E1(n) : [];
++      async (r) => {
++        t.value = r ? await P1(r) : [];
+       },
+       { immediate: !0 }
+     );
+-    const C = k(!0), E = k(!1);
+-    let b = null;
+-    function L() {
+-      b && clearTimeout(b), b = setTimeout(() => {
+-        o.isPlaying && !V.value && (C.value = !1);
++    const c = b(!0), P = b(!1);
++    let w = null;
++    function _() {
++      w && clearTimeout(w), w = setTimeout(() => {
++        o.isPlaying && !V.value && (c.value = !1);
+       }, 3e3);
+     }
+     function S() {
+-      C.value = !0, E.value || L();
++      c.value = !0, P.value || _();
+     }
+     function $() {
+-      E.value = !0, C.value = !0, b && clearTimeout(b);
++      P.value = !0, c.value = !0, w && clearTimeout(w);
+     }
+     function Z() {
+-      E.value = !1, L();
++      P.value = !1, _();
+     }
+-    function z() {
+-      o.isPlaying && !V.value && (C.value = !1);
++    function z(r) {
++      r.pointerType !== "touch" && o.isPlaying && !V.value && (c.value = !1);
+     }
+-    const D = k(null), G = k(0);
++    const D = b(null), G = b(0);
+     let Q = null;
+-    function j(n) {
+-      Q && clearTimeout(Q), D.value = n, G.value++, Q = setTimeout(() => {
++    function j(r) {
++      Q && clearTimeout(Q), D.value = r, G.value++, Q = setTimeout(() => {
+         D.value = null;
+       }, 700);
+     }
+-    function O() {
+-      o.isPlaying ? (d.pause(), j("pause")) : (d.play(), j("play"));
++    function O(r) {
++      r && r.pointerType === "touch" && !c.value || (o.isPlaying ? (v.pause(), j("pause")) : (v.play(), j("play")));
+     }
+-    function p(n) {
+-      var y;
++    function f(r) {
++      var s;
+       if (!i.keyboard) return;
+       S();
+-      const c = {
++      const h = {
+         Space: () => {
+-          n.preventDefault(), O();
++          r.preventDefault(), O();
+         },
+         KeyK: () => {
+-          n.preventDefault(), O();
++          r.preventDefault(), O();
+         },
+         ArrowLeft: () => {
+-          n.preventDefault(), d.seek(o.currentTime - 5);
++          r.preventDefault(), v.seek(o.currentTime - 5);
+         },
+         ArrowRight: () => {
+-          n.preventDefault(), d.seek(o.currentTime + 5);
++          r.preventDefault(), v.seek(o.currentTime + 5);
+         },
+         ArrowUp: () => {
+-          n.preventDefault(), d.setVolume(o.volume + 0.1);
++          r.preventDefault(), v.setVolume(o.volume + 0.1);
+         },
+         ArrowDown: () => {
+-          n.preventDefault(), d.setVolume(o.volume - 0.1);
++          r.preventDefault(), v.setVolume(o.volume - 0.1);
+         },
+-        KeyM: () => d.toggleMute(),
+-        KeyF: () => d.toggleFullscreen(),
++        KeyM: () => v.toggleMute(),
++        KeyF: () => v.toggleFullscreen(),
+         KeyP: () => {
+-          i.pip && R.value && d.togglePiP();
++          i.pip && R.value && v.togglePiP();
+         }
+       };
+-      (y = c[n.code]) == null || y.call(c);
++      (s = h[r.code]) == null || s.call(h);
++    }
++    function C(r) {
++      c.value || r.preventDefault(), S();
+     }
+-    return (n, c) => (r(), u("div", {
++    return (r, h) => (l(), u("div", {
+       ref_key: "playerEl",
+-      ref: h,
+-      class: N(["vp-player", { "vp-controls-hidden": !C.value }]),
++      ref: y,
++      class: N(["vp-player", { "vp-controls-hidden": !c.value }]),
+       tabindex: "0",
+-      onMousedownCapture: c[0] || (c[0] = (y) => {
+-        var s;
+-        return (s = h.value) == null ? void 0 : s.focus();
++      onMousedownCapture: h[0] || (h[0] = (s) => {
++        var d;
++        return (d = y.value) == null ? void 0 : d.focus();
+       }),
+       onMousemove: S,
+-      onMouseleave: z,
+-      onTouchstartPassive: S,
++      onPointerleave: z,
++      onTouchstart: C,
+       onTouchmovePassive: S,
+-      onKeydown: p
++      onKeydown: f
+     }, [
+       a("div", N5, [
+         a("video", {
+           ref_key: "videoRef",
+           ref: g,
+-          loop: l.loop,
+-          muted: l.muted,
+-          autoplay: l.autoplay,
++          loop: n.loop,
++          muted: n.muted,
++          autoplay: n.autoplay,
+           preload: "metadata",
+           crossorigin: "anonymous",
+           playsinline: "",
+           "webkit-playsinline": ""
+         }, [
+-          (r(!0), u(X, null, J(l.tracks, (y) => (r(), u("track", {
+-            key: y.src,
+-            src: y.src,
+-            label: y.label,
+-            srclang: y.language,
+-            kind: y.kind ?? "subtitles"
++          (l(!0), u(X, null, J(n.tracks, (s) => (l(), u("track", {
++            key: s.src,
++            src: s.src,
++            label: s.label,
++            srclang: s.language,
++            kind: s.kind ?? "subtitles"
+           }, null, 8, K5))), 128))
+         ], 8, O5),
+         M(e1, { name: "vp-poster" }, {
+           default: W(() => [
+-            V.value ? (r(), u("div", {
++            V.value ? (l(), u("div", {
+               key: 0,
+               class: "vp-poster",
+               style: K({ backgroundImage: `url(${i.poster})` })
+@@ -1346,36 +1349,36 @@ const I5 = /* @__PURE__ */ P(B5, [["render", F5]]), Q5 = { class: "vp-overlay" }
+           _: 1
+         })
+       ]),
+-      w.value.length > 0 ? (r(), u("div", U5, [
+-        (r(!0), u(X, null, J(w.value, (y, s) => (r(), u("span", {
+-          key: s,
++      L.value.length > 0 ? (l(), u("div", U5, [
++        (l(!0), u(X, null, J(L.value, (s, d) => (l(), u("span", {
++          key: d,
+           class: "vp-subtitle-cue"
+-        }, q(y), 1))), 128))
++        }, q(s), 1))), 128))
+       ])) : I("", !0),
+       a("div", {
+         class: "vp-video-click-area",
+         onClick: O
+       }),
+-      D.value ? (r(), u("div", {
++      D.value ? (l(), u("div", {
+         key: G.value,
+         class: "vp-play-flash"
+       }, [
+         a("div", z5, [
+-          D.value === "pause" ? (r(), x(p1, { key: 0 })) : (r(), x(v1, { key: 1 }))
++          D.value === "pause" ? (l(), x(p1, { key: 0 })) : (l(), x(v1, { key: 1 }))
+         ])
+       ])) : I("", !0),
+-      m(o).isLoading || m(o).isBuffering ? (r(), x(Z5, { key: 2 }, {
++      m(o).isLoading || m(o).isBuffering ? (l(), x(Z5, { key: 2 }, {
+         default: W(() => [
+-          Y(n.$slots, "loading")
++          Y(r.$slots, "loading")
+         ]),
+         _: 3
+-      })) : m(o).error ? (r(), x(D5, {
++      })) : m(o).error ? (l(), x(D5, {
+         key: 3,
+         error: m(o).error,
+-        onRetry: m(d).retry
++        onRetry: m(v).retry
+       }, {
+-        default: W((y) => [
+-          Y(n.$slots, "error", k1(b1(y)))
++        default: W((s) => [
++          Y(r.$slots, "error", k1(b1(s)))
+         ]),
+         _: 3
+       }, 8, ["error", "onRetry"])) : I("", !0),
+@@ -1384,15 +1387,15 @@ const I5 = /* @__PURE__ */ P(B5, [["render", F5]]), Q5 = { class: "vp-overlay" }
+           "current-time": m(o).currentTime,
+           duration: m(o).duration,
+           buffered: m(o).buffered,
+-          chapters: l.chapters,
++          chapters: n.chapters,
+           "thumbnail-cues": t.value.length ? t.value : void 0,
+-          onSeek: m(d).seek,
++          onSeek: m(v).seek,
+           onSeekstart: $,
+           onSeekend: Z
+         }, null, 8, ["current-time", "duration", "buffered", "chapters", "thumbnail-cues", "onSeek"]),
+-        Y(n.$slots, "controls", {
++        Y(r.$slots, "controls", {
+           state: m(o),
+-          player: m(d)
++          player: m(v)
+         }, () => [
+           a("div", W5, [
+             M(Q1, {
+@@ -1402,41 +1405,41 @@ const I5 = /* @__PURE__ */ P(B5, [["render", F5]]), Q5 = { class: "vp-overlay" }
+             M(o2, {
+               volume: m(o).volume,
+               "is-muted": m(o).isMuted,
+-              onToggleMute: m(d).toggleMute,
+-              onSetVolume: m(d).setVolume
++              onToggleMute: m(v).toggleMute,
++              onSetVolume: m(v).setVolume
+             }, null, 8, ["volume", "is-muted", "onToggleMute", "onSetVolume"]),
+             M(U1, {
+               "current-time": m(o).currentTime,
+               duration: m(o).duration
+             }, null, 8, ["current-time", "duration"]),
+-            c[2] || (c[2] = a("div", { class: "vp-spacer" }, null, -1)),
+-            m(o).isLive || l.live ? (r(), u("span", G5, [...c[1] || (c[1] = [
++            h[2] || (h[2] = a("div", { class: "vp-spacer" }, null, -1)),
++            m(o).isLive || n.live ? (l(), u("span", G5, [...h[1] || (h[1] = [
+               a("span", { class: "vp-live-dot" }, null, -1),
+               t1(" Live ", -1)
+             ])])) : I("", !0),
+-            l.tracks && l.tracks.length > 0 ? (r(), x(k2, {
++            n.tracks && n.tracks.length > 0 ? (l(), x(k2, {
+               key: 1,
+-              tracks: l.tracks,
++              tracks: n.tracks,
+               "current-track": m(o).currentTrack,
+-              onSetTrack: m(d).setTrack
++              onSetTrack: m(v).setTrack
+             }, null, 8, ["tracks", "current-track", "onSetTrack"])) : I("", !0),
+-            l.pip && R.value ? (r(), x(T2, {
++            n.pip && R.value ? (l(), x(T2, {
+               key: 2,
+               "is-pi-p": m(o).isPiP,
+-              onClick: m(d).togglePiP
++              onClick: m(v).togglePiP
+             }, null, 8, ["is-pi-p", "onClick"])) : I("", !0),
+             M(T5, {
+               "playback-rate": m(o).playbackRate,
+-              "playback-rates": l.playbackRates,
++              "playback-rates": n.playbackRates,
+               "available-qualities": m(o).availableQualities,
+               "current-quality": m(o).currentQuality,
+               "is-fullscreen": m(o).isFullscreen,
+-              onSetSpeed: m(d).setSpeed,
+-              onSetQuality: m(d).setQuality
++              onSetSpeed: m(v).setSpeed,
++              onSetQuality: m(v).setQuality
+             }, null, 8, ["playback-rate", "playback-rates", "available-qualities", "current-quality", "is-fullscreen", "onSetSpeed", "onSetQuality"]),
+             M(A2, {
+               "is-fullscreen": m(o).isFullscreen,
+-              onClick: m(d).toggleFullscreen
++              onClick: m(v).toggleFullscreen
+             }, null, 8, ["is-fullscreen", "onClick"])
+           ])
+         ])
+@@ -1444,8 +1447,8 @@ const I5 = /* @__PURE__ */ P(B5, [["render", F5]]), Q5 = { class: "vp-overlay" }
+     ], 34));
+   }
+ }), e4 = {
+-  install(l) {
+-    l.component("VideoPlayer", X5);
++  install(n) {
++    n.component("VideoPlayer", X5);
+   }
+ };
+ export {
