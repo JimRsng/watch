@@ -8,6 +8,9 @@ const firstLoad = ref(true);
 const playerErrored = ref(false);
 
 const chatFrame = useTemplateRef("chat-frame");
+const videoComp = useTemplateRef<{ $el?: HTMLElement }>("video-comp");
+const player = computed(() => (videoComp.value?.$el?.querySelector<HTMLVideoElement>("video")));
+
 const { width: chatFrameWidth } = useElementSize(chatFrame);
 
 const { width, height } = useWindowSize();
@@ -21,17 +24,15 @@ const mobileVideoSize = computed(() => {
 const mobileChatSize = computed(() => 100 - mobileVideoSize.value);
 
 const onPlay = () => {
-  const player = document.querySelector<HTMLVideoElement>("#player video");
-  if (!player) return;
+  if (!player.value || !player.value.currentTime) return;
   playerErrored.value = false;
-  player.currentTime = player.duration;
+  player.value.currentTime = player.value.duration;
 };
 
 const onUnmuteOverlayPointerDown = () => {
   firstLoad.value = false;
-  const player = document.querySelector<HTMLVideoElement>("#player video");
-  if (!player || player.error) return;
-  player.muted = false;
+  if (!player.value || player.value.error) return;
+  player.value.muted = false;
 };
 </script>
 
@@ -42,7 +43,7 @@ const onUnmuteOverlayPointerDown = () => {
         <Pane :size="isMobile ? mobileVideoSize : 80" :min-size="isMobile ? mobileVideoSize : 40">
           <div class="flex h-full items-center justify-center bg-black flex-col">
             <div class="aspect-video w-full relative">
-              <VideoPlayer id="player" :src="SITE.hlsURL" muted autoplay @play="onPlay" @error="playerErrored = true" />
+              <VideoPlayer id="player" ref="video-comp" :src="SITE.hlsURL" muted autoplay @play="onPlay" @error="playerErrored = true" />
               <div
                 v-if="firstLoad && !playerErrored"
                 class="absolute inset-0 flex items-center justify-center bg-black/50 cursor-pointer select-none z-20"
