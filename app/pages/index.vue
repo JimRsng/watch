@@ -4,6 +4,8 @@ import { useElementSize, useMediaQuery, useWindowSize } from "@vueuse/core";
 
 const chatToggle = ref<Platform>("kick");
 const isMobile = useMediaQuery("(max-width: 576px)");
+const firstLoad = ref(true);
+const playerErrored = ref(false);
 
 const chatFrame = useTemplateRef("chat-frame");
 const { width: chatFrameWidth } = useElementSize(chatFrame);
@@ -21,7 +23,15 @@ const mobileChatSize = computed(() => 100 - mobileVideoSize.value);
 const onPlay = () => {
   const player = document.querySelector<HTMLVideoElement>("#player video");
   if (!player) return;
+  playerErrored.value = false;
   player.currentTime = player.duration;
+};
+
+const onUnmuteOverlayPointerDown = () => {
+  firstLoad.value = false;
+  const player = document.querySelector<HTMLVideoElement>("#player video");
+  if (!player || player.error) return;
+  player.muted = false;
 };
 </script>
 
@@ -31,8 +41,19 @@ const onPlay = () => {
       <Splitpanes class="h-full" :horizontal="isMobile" :class="{ 'default-theme': !isMobile }">
         <Pane :size="isMobile ? mobileVideoSize : 80" :min-size="isMobile ? mobileVideoSize : 40">
           <div class="flex h-full items-center justify-center bg-black flex-col">
-            <div class="aspect-video w-full">
-              <VideoPlayer id="player" :src="SITE.hlsURL" muted autoplay @play="onPlay" />
+            <div class="aspect-video w-full relative">
+              <VideoPlayer id="player" :src="SITE.hlsURL" muted autoplay @play="onPlay" @error="playerErrored = true" />
+              <div
+                v-if="firstLoad && !playerErrored"
+                class="absolute inset-0 flex items-center justify-center bg-black/50 cursor-pointer select-none z-20"
+                role="button"
+                @pointerdown="onUnmuteOverlayPointerDown"
+              >
+                <div class="text-white text-lg flex items-center gap-2 font-semibold">
+                  <Icon name="ph:speaker-simple-x-fill" size="24" />
+                  <span>Click to unmute</span>
+                </div>
+              </div>
             </div>
             <div v-if="!isMobile" class="flex justify-end w-full gap-2 py-2 px-3">
               <ChatToggler v-model="chatToggle" class="text-white" />
