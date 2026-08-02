@@ -29,11 +29,13 @@ const onPlay = () => {
   player.value.currentTime = player.value.duration;
 };
 
-const onUnmuteOverlayPointerDown = () => {
+const onUnmuteOverlayClick = () => {
   firstLoad.value = false;
   if (!player.value || player.value.error) return;
   player.value.muted = false;
 };
+
+const isTouch = () => "ontouchstart" in window || navigator.maxTouchPoints > 0;
 </script>
 
 <template>
@@ -42,19 +44,19 @@ const onUnmuteOverlayPointerDown = () => {
       <Splitpanes class="h-full" :horizontal="isMobile" :class="{ 'default-theme': !isMobile }">
         <Pane :size="isMobile ? mobileVideoSize : 80" :min-size="isMobile ? mobileVideoSize : 40">
           <div class="flex h-full items-center justify-center bg-black flex-col">
-            <div class="aspect-video w-full relative">
-              <VideoPlayer id="player" ref="video-comp" :src="SITE.hlsURL" muted autoplay @play="onPlay" @error="playerErrored = true" />
+            <div class="group aspect-video w-full relative">
               <div
                 v-if="firstLoad && !playerErrored"
-                class="absolute inset-0 flex items-center justify-center bg-black/50 cursor-pointer select-none z-20"
-                role="button"
-                @pointerdown="onUnmuteOverlayPointerDown"
+                class="absolute inset-0 items-center justify-center bg-black/50 cursor-pointer select-none pointer-events-auto z-20"
+                :class="isTouch() ? 'flex' : 'hidden group-hover:flex'"
+                @click.stop.prevent="onUnmuteOverlayClick"
               >
                 <div class="text-white text-lg flex items-center gap-2 font-semibold">
                   <Icon name="ph:speaker-simple-x-fill" size="24" />
                   <span>Click to unmute</span>
                 </div>
               </div>
+              <VideoPlayer id="player" ref="video-comp" :src="SITE.hlsURL" muted autoplay :class="{ 'pointer-events-none': firstLoad }" @play="onPlay" @error="playerErrored = true" />
             </div>
             <div v-if="!isMobile" class="flex justify-end w-full gap-2 py-2 px-3">
               <ChatToggler v-model="chatToggle" class="text-white" />
