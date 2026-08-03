@@ -32,7 +32,7 @@ const onUnmuteOverlayClick = async () => {
   firstLoad.value = false;
   if (!player.value || player.value.error) return;
   player.value.muted = false;
-  player.value.volume = await storage.local.get<number>(preference.volume.key) ?? preference.volume.default;
+  player.value.volume = await storage.local.get<number>(preference.volume.key) || preference.volume.default;
 };
 
 const isTouch = () => "ontouchstart" in window || navigator.maxTouchPoints > 0;
