@@ -1,21 +1,18 @@
 <script setup lang="ts">
-const model = defineModel<Platform>({ default: "kick" });
+const model = defineModel<Platform>({ default: preference.platform.default });
 const switchValue = computed(() => model.value === "twitch");
 
 const toggleChat = () => {
   model.value = model.value === "twitch" ? "kick" : "twitch";
 };
 
-const key = "platform-preference";
-
-onMounted(() => {
-  const preference = localStorage.getItem(key) as Platform | null;
-  if (!preference) localStorage.setItem(key, model.value);
-  else model.value = preference;
+onMounted(async () => {
+  const platform = await storage.local.get<Platform>(preference.platform.key) ?? model.value;
+  model.value = platform;
 });
 
 watch(model, (newValue) => {
-  localStorage.setItem(key, newValue);
+  storage.local.set(preference.platform.key, newValue);
 });
 </script>
 

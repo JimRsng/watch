@@ -24,10 +24,9 @@ export const embed = {
   }
 };
 
-export const preference: {
-  volume: { key: string, default: number };
-} = {
-  volume: { key: "volume-preference", default: 1 }
+export const preference: Preferences = {
+  volume: { key: "volume-preference", default: 1 },
+  platform: { key: "platform-preference", default: "twitch" }
 };
 
 export const storage = {
