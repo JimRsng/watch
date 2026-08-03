@@ -62,7 +62,7 @@ const onFullScreenChange = (isFullscreen: boolean) => {
                   <span>Click to unmute</span>
                 </div>
               </div>
-              <VideoPlayer id="player" ref="video-comp" :src="SITE.hlsURL" muted autoplay :class="{ 'pointer-events-none': firstLoad }" @play="onPlay" @error="playerErrored = true" @fullscreen-change="onFullScreenChange" />
+              <VideoPlayer id="player" ref="video-comp" :src="SITE.hlsURL" muted autoplay :class="{ 'pointer-events-none': firstLoad && !playerErrored }" @play="onPlay" @error="playerErrored = true" @fullscreen-change="onFullScreenChange" />
             </div>
             <div v-if="!isMobile" class="flex justify-end w-full gap-2 py-2 px-3">
               <ChatToggler v-model="chatToggle" class="text-white" />
