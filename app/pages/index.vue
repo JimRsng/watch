@@ -12,7 +12,6 @@ const videoComp = useTemplateRef<{ $el?: HTMLElement }>("video-comp");
 const player = computed(() => (videoComp.value?.$el?.querySelector<HTMLVideoElement>("video")));
 
 const { width: chatFrameWidth } = useElementSize(chatFrame);
-
 const { width, height } = useWindowSize();
 
 const mobileVideoSize = computed(() => {
@@ -29,10 +28,11 @@ const onPlay = () => {
   player.value.currentTime = player.value.duration;
 };
 
-const onUnmuteOverlayClick = () => {
+const onUnmuteOverlayClick = async () => {
   firstLoad.value = false;
   if (!player.value || player.value.error) return;
   player.value.muted = false;
+  player.value.volume = await storage.local.get<number>(preference.volume.key) ?? preference.volume.default;
 };
 
 const isTouch = () => "ontouchstart" in window || navigator.maxTouchPoints > 0;
@@ -42,6 +42,11 @@ const onFullScreenChange = (isFullscreen: boolean) => {
   if (isFullscreen) screen.orientation.lock("landscape").catch(() => {});
   else screen.orientation.lock("portrait").catch(() => {});
 };
+
+onMounted(async () => {
+  await nextTick();
+  player.value?.addEventListener("volumechange", () => storage.local.set(preference.volume.key, player.value?.volume ?? preference.volume.default));
+});
 </script>
 
 <template>
@@ -53,7 +58,7 @@ const onFullScreenChange = (isFullscreen: boolean) => {
             <div class="group aspect-video w-full relative">
               <div
                 v-if="firstLoad && !playerErrored"
-                class="absolute inset-0 items-center justify-center bg-black/50 cursor-pointer select-none pointer-events-auto z-20"
+                class="absolute inset-0 items-center justify-center bg-black/40 cursor-pointer select-none pointer-events-auto z-20"
                 :class="isTouch() ? 'flex' : 'hidden group-hover:flex'"
                 @click.stop.prevent="onUnmuteOverlayClick"
               >

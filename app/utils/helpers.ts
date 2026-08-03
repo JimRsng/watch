@@ -1,4 +1,6 @@
 import { withQuery } from "ufo";
+import { createStorage } from "unstorage";
+import localStorageDriver from "unstorage/drivers/localstorage";
 
 export const embed = {
   twitch: {
@@ -20,4 +22,16 @@ export const embed = {
     }),
     chat: `https://chat.kick.cx/embed/${SITE.platforms.kick.user}`
   }
+};
+
+export const preference: {
+  volume: { key: string, default: number };
+} = {
+  volume: { key: "volume-preference", default: 1 }
+};
+
+export const storage = {
+  local: createStorage({
+    driver: import.meta.client ? localStorageDriver({}) : undefined
+  })
 };
