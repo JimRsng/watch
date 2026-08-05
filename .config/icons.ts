@@ -3,5 +3,6 @@ export default [
   "ph:pause-fill",
   "simple-icons:kick",
   "simple-icons:twitch",
-  "ph:speaker-simple-x-fill"
+  "ph:speaker-simple-x-fill",
+  "ph:user"
 ];

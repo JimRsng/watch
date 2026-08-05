@@ -1,6 +1,7 @@
 import { withQuery } from "ufo";
 import { createStorage } from "unstorage";
 import localStorageDriver from "unstorage/drivers/localstorage";
+import sessionStorageDriver from "unstorage/drivers/session-storage";
 
 export const embed = {
   twitch: {
@@ -24,13 +25,17 @@ export const embed = {
   }
 };
 
-export const preference: Preferences = {
+export const preference: StorageKeyValues = {
   volume: { key: "volume-preference", default: 1 },
-  platform: { key: "platform-preference", default: "twitch" }
+  platform: { key: "platform-preference", default: "twitch" },
+  uuid: { key: "uuid", default: crypto.randomUUID() }
 };
 
 export const storage = {
   local: createStorage({
     driver: import.meta.client ? localStorageDriver({}) : undefined
+  }),
+  session: createStorage({
+    driver: import.meta.client ? sessionStorageDriver({}) : undefined
   })
 };

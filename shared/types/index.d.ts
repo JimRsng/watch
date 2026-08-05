@@ -1,9 +1,12 @@
 declare global {
   type Platform = "twitch" | "kick";
 
-  interface Preferences {
-    volume: { key: string, default: number };
-    platform: { key: string, default: Platform };
+  type StorageKeyDefault<T = unknown> = { key: string, default: T };
+
+  interface StorageKeyValues {
+    volume: StorageKeyDefault<number>;
+    platform: StorageKeyDefault<Platform>;
+    uuid: StorageKeyDefault<string>;
   }
 }
 
