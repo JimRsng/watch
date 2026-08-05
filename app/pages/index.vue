@@ -119,11 +119,8 @@ onMounted(async () => {
                 @buffering="onBuffering"
               />
             </div>
-            <div v-if="!isMobile && !playerErrored && liveData.isLive" class="flex justify-end w-full gap-4 py-2 px-3">
-              <div class="flex items-center gap-1 text-red-400 font-semibold">
-                <Icon name="ph:user" size="20" />
-                <span>{{ liveData.viewerCount }}</span>
-              </div>
+            <div v-if="!isMobile" class="flex justify-end w-full gap-4 py-2 px-3">
+              <ChatViewerCount v-if="!playerErrored && liveData.isLive" :count="liveData.viewerCount" />
               <ChatToggler v-model="chatToggle" class="text-white" />
             </div>
           </div>
@@ -149,6 +146,7 @@ onMounted(async () => {
                 <ChatFrame :src="embed.kick.chat" :class="{ hidden: chatToggle === 'twitch' }" />
                 <ChatFrame :src="embed.twitch.chat" :class="{ hidden: chatToggle === 'kick' }" />
                 <div v-if="isMobile" class="flex justify-start w-full gap-2 absolute z-1 top-0">
+                  <ChatViewerCount v-if="!playerErrored && liveData.isLive" :count="liveData.viewerCount" />
                   <ChatToggler v-model="chatToggle" class="p-2 text-white" />
                 </div>
               </div>
