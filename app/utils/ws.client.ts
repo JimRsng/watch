@@ -9,17 +9,14 @@ export const createWebsocket = async ({
 }) => {
   try {
     ws.value = new WebSocket(SITE.wsURL);
-    const connect = async () => {
-      await new Promise<void>((resolve, reject) => {
-        ws.value?.addEventListener("open", () => {
-          console.info("[jimtracker] Connected to WebSocket server.");
-          resolve();
-        });
-        ws.value?.addEventListener("error", reject);
-        ws.value?.addEventListener("close", reject);
+    await new Promise<void>((resolve, reject) => {
+      ws.value?.addEventListener("open", () => {
+        console.info("[jimtracker] Connected to WebSocket server.");
+        resolve();
       });
-    };
-    await connect();
+      ws.value?.addEventListener("error", reject);
+      ws.value?.addEventListener("close", reject);
+    });
     ws.value.addEventListener("message", (message) => {
       const { type, viewerCount, isLive } = JSON.parse(message.data?.toString() || "{}") as { type: "liveInfo", viewerCount: number, isLive: boolean };
       if (type === "liveInfo") {
