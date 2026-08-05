@@ -18,10 +18,11 @@ export const createWebsocket = async ({
       ws.value?.addEventListener("close", reject);
     });
     ws.value.addEventListener("message", (message) => {
-      const { type, viewerCount, isLive } = JSON.parse(message.data?.toString() || "{}") as { type: "liveInfo", viewerCount: number, isLive: boolean };
+      const { type, viewerCount, isLive, sessionId } = JSON.parse(message.data?.toString() || "{}") as { type: "liveInfo", viewerCount: number, isLive: boolean, sessionId?: string };
       if (type === "liveInfo") {
         liveData.value.viewerCount = viewerCount;
         liveData.value.isLive = isLive;
+        if (liveData.value.sessionId !== sessionId) liveData.value.sessionId = sessionId;
         ws.value?.send(JSON.stringify({ type: "heartbeat", uuid: uuid.value }));
       }
     });

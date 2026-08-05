@@ -74,6 +74,13 @@ const onBuffering = async () => {
   }
 };
 
+const onError = async () => {
+  playerErrored.value = true;
+  if (!ws.value) {
+    await createWebsocket({ ws, liveData, uuid });
+  }
+};
+
 onMounted(async () => {
   await nextTick();
   player.value?.addEventListener("volumechange", () => storage.local.set(preference.volume.key, player.value?.volume ?? preference.volume.default));
@@ -108,13 +115,13 @@ onMounted(async () => {
               <VideoPlayer
                 id="player"
                 ref="video-comp"
-                :src="`${SITE.hlsURL}/live/master.m3u8`"
+                :src="liveData.sessionId ? `${SITE.hlsURL}/live/${liveData.sessionId}_master.m3u8` : 'master.m3u8'"
                 muted
                 autoplay
                 :class="{ 'pointer-events-none': firstLoad && !playerErrored }"
                 @play="onPlay"
                 @pause="onPause"
-                @error="playerErrored = true"
+                @error="onError"
                 @fullscreen-change="onFullScreenChange"
                 @buffering="onBuffering"
               />
