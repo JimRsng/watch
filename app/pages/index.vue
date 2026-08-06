@@ -115,7 +115,7 @@ onMounted(async () => {
               <VideoPlayer
                 id="player"
                 ref="video-comp"
-                :src="liveData.sessionId ? `${SITE.hlsURL}/live/${liveData.sessionId}_master.m3u8` : 'master.m3u8'"
+                :src="liveData.sessionId ? `${SITE.hlsURL}/live/${liveData.sessionId}_master.m3u8` : `${SITE.hlsURL}/live/master.m3u8`"
                 muted
                 autoplay
                 :class="{ 'pointer-events-none': firstLoad && !playerErrored }"
