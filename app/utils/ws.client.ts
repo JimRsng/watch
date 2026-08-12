@@ -1,10 +1,12 @@
 export const createWebsocket = async ({
+  ws,
+  liveData,
+  uuid
 }: {
   ws: Ref<WebSocket | null>;
   liveData: Ref<{ viewerCount: number, isLive: boolean, sessionId?: string }>;
   uuid: Ref<string | null>;
 }) => {
-  /*
   try {
     ws.value = new WebSocket(SITE.wsURL);
     await new Promise<void>((resolve, reject) => {
@@ -40,5 +42,4 @@ export const createWebsocket = async ({
     liveData.value.isLive = false;
     ws.value = null;
   }
-  */
 };
