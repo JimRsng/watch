@@ -14,7 +14,7 @@ const liveData = ref({
   viewerCount: 0
 });
 
-const { isLive, viewerCount, sessionId } = await $fetch<{ isLive: boolean, viewerCount: number, sessionId: string }>("/live", { baseURL: SITE.hlsURL, method: "GET" }).catch(() => ({ isLive: false, viewerCount: 0, sessionId: "" }));
+const { isLive, viewerCount, sessionId } = await $fetch<{ isLive: boolean, viewerCount: number, sessionId: string }>("/live", { baseURL: SITE.serverURL, method: "GET" }).catch(() => ({ isLive: false, viewerCount: 0, sessionId: "" }));
 liveData.value.isLive = isLive;
 liveData.value.viewerCount = viewerCount;
 liveData.value.sessionId = sessionId;
@@ -115,7 +115,7 @@ onMounted(async () => {
               <VideoPlayer
                 id="player"
                 ref="video-comp"
-                :src="liveData.sessionId ? `${SITE.hlsURL}/live/${liveData.sessionId}/master.m3u8` : `${SITE.hlsURL}/live/master.m3u8`"
+                :src="SITE.muxURL"
                 muted
                 autoplay
                 :class="{ 'pointer-events-none': firstLoad && !playerErrored }"
