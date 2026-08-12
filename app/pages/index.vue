@@ -120,15 +120,11 @@ onMounted(async () => {
                 autoplay
                 :class="{ 'pointer-events-none': firstLoad && !playerErrored }"
                 :p2p="{
-                  config: {
-                    core: {
-                      announceTrackers: [
-                        'wss://tracker.openwebtorrent.com',
-                      ],
-                      swarmId: liveData.sessionId,
-                      simultaneousHttpDownloads: 2,
-                      simultaneousP2PDownloads: 4,
-                    },
+                  core: {
+                    announceTrackers: ['wss://tracker.openwebtorrent.com'],
+                    swarmId: liveData.sessionId,
+                    simultaneousHttpDownloads: 2,
+                    simultaneousP2PDownloads: 4,
                   },
                 }"
                 @play="onPlay"
