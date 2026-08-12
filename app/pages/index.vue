@@ -127,7 +127,7 @@ onMounted(async () => {
                       ],
                       swarmId: liveData.sessionId,
                       simultaneousHttpDownloads: 2,
-                      simultaneousP2PDownloads: 3,
+                      simultaneousP2PDownloads: 4,
                     },
                   },
                 }"
