@@ -60,6 +60,8 @@
     "eslint": "^10.8.0",
     "hls.js": "^1.6.17",
     "nuxt-ui-colors-no-inline": "^0.0.6",
+    "p2p-media-loader-core": "^3.0.1",
+    "p2p-media-loader-hlsjs": "^3.0.1",
     "splitpanes": "^4.1.2",
     "stylelint": "^17.14.1",
     "stylelint-config-standard-scss": "^17.0.0",
