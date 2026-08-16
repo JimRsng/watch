@@ -122,7 +122,7 @@ onMounted(async () => {
                 :p2p="{
                   core: {
                     announceTrackers: ['wss://tracker.openwebtorrent.com'],
-                    swarmId: liveData.sessionId,
+                    swarmId: `jimrising-${liveData.sessionId}`,
                     simultaneousHttpDownloads: 2,
                     simultaneousP2PDownloads: 4,
                   },
