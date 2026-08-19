@@ -121,10 +121,7 @@ onMounted(async () => {
                 :class="{ 'pointer-events-none': firstLoad && !playerErrored }"
                 :p2p="{
                   core: {
-                    announceTrackers: [
-                      `${SITE.wsURL}/tracker`,
-                      'wss://tracker.openwebtorrent.com',
-                    ],
+                    announceTrackers: ['wss://tracker.openwebtorrent.com'],
                     swarmId: `jimrising-${liveData.sessionId}`,
                     simultaneousHttpDownloads: 2,
                     simultaneousP2PDownloads: 4,
