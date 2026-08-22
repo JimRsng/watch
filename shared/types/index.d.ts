@@ -8,6 +8,16 @@ declare global {
     platform: StorageKeyDefault<Platform>;
     uuid: StorageKeyDefault<string>;
   }
+
+  interface LiveData {
+    isLive: boolean;
+    viewerCount: number;
+    sessionId: string;
+  }
+
+  interface LiveDataMessage extends LiveData {
+    type: "liveInfo";
+  }
 }
 
 export {};

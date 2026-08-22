@@ -4,7 +4,7 @@ export const createWebsocket = async ({
   uuid
 }: {
   ws: Ref<WebSocket | null>;
-  liveData: Ref<{ viewerCount: number, isLive: boolean, sessionId?: string }>;
+  liveData: Ref<LiveData>;
   uuid: Ref<string | null>;
 }) => {
   try {
@@ -18,7 +18,7 @@ export const createWebsocket = async ({
       ws.value?.addEventListener("close", reject);
     });
     ws.value.addEventListener("message", (message) => {
-      const { type, viewerCount, isLive, sessionId } = JSON.parse(message.data?.toString() || "{}") as { type: "liveInfo", viewerCount: number, isLive: boolean, sessionId?: string };
+      const { type, viewerCount, isLive, sessionId } = JSON.parse(message.data?.toString() || "{}") as LiveDataMessage;
       if (type === "liveInfo") {
         liveData.value.viewerCount = viewerCount;
         liveData.value.isLive = isLive;

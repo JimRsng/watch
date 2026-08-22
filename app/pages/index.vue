@@ -8,16 +8,8 @@ const firstLoad = ref(true);
 const playerErrored = ref(false);
 const ws = ref<WebSocket | null>(null);
 const uuid = ref<string | null>(null);
-const liveData = ref({
-  isLive: false,
-  sessionId: "",
-  viewerCount: 0
-});
 
-const { isLive, viewerCount, sessionId } = await $fetch<{ isLive: boolean, viewerCount: number, sessionId: string }>("/live", { baseURL: SITE.serverURL, method: "GET" }).catch(() => ({ isLive: false, viewerCount: 0, sessionId: "" }));
-liveData.value.isLive = isLive;
-liveData.value.viewerCount = viewerCount;
-liveData.value.sessionId = sessionId;
+const { data: liveData } = await useLiveData();
 
 const chatFrame = useTemplateRef<HTMLElement>("chat-frame");
 const videoComp = useTemplateRef<{ $el?: HTMLElement }>("video-comp");
