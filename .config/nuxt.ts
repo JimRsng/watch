@@ -55,8 +55,7 @@ export default defineNuxtConfig({
 
   css: [
     "~/assets/css/ui.tailwind.css",
-    "~/assets/scss/app.scss",
-    "splitpanes/dist/splitpanes.css"
+    "~/assets/scss/app.scss"
   ],
 
   site: {

@@ -44,30 +44,29 @@
     "test:types": "vue-tsc -b --noEmit"
   },
   "dependencies": {
-    "@nuxt/icon": "^2.4.1",
-    "@nuxt/ui": "^4.10.0",
+    "@nuxt/icon": "^2.5.0",
+    "@nuxt/ui": "^4.11.0",
     "@nuxthub/core": "^0.10.8",
     "@nuxtjs/color-mode": "^4.0.1",
-    "@nuxtjs/sitemap": "^8.3.3",
+    "@nuxtjs/sitemap": "^8.5.0",
     "nuxt": "^4.5.2",
-    "sass-embedded": "^1.100.0"
+    "sass-embedded": "^1.103.1"
   },
   "devDependencies": {
     "@iconify-json/ph": "^1.2.2",
     "@iconify-json/simple-icons": "^1.2.93",
     "@nuxt/eslint": "^1.17.0",
     "@vue-player/nuxt": "^0.1.6",
-    "eslint": "^10.8.0",
-    "hls.js": "^1.6.17",
+    "eslint": "^10.9.0",
+    "hls.js": "^1.7.1",
     "nuxt-ui-colors-no-inline": "^0.0.6",
-    "p2p-media-loader-core": "^3.0.1",
-    "p2p-media-loader-hlsjs": "^3.0.1",
-    "splitpanes": "^4.1.2",
+    "p2p-media-loader-core": "^4.0.0",
+    "p2p-media-loader-hlsjs": "^4.0.0",
     "stylelint": "^17.14.1",
     "stylelint-config-standard-scss": "^17.0.0",
     "typescript": "^6.0.3",
     "ufo": "^1.6.4",
-    "wrangler": "^4.119.0"
+    "wrangler": "^4.125.0"
   },
-  "packageManager": "pnpm@11.20.0"
+  "packageManager": "pnpm@11.22.0"
 }

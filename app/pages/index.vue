@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Pane, Splitpanes } from "splitpanes";
 import { useElementSize, useMediaQuery, useWindowSize } from "@vueuse/core";
+import type { SplitterItem } from "@nuxt/ui";
 
 const chatToggle = ref<Platform>("kick");
 const isMobile = useMediaQuery("(max-width: 576px)");
@@ -19,7 +19,7 @@ liveData.value.isLive = isLive;
 liveData.value.viewerCount = viewerCount;
 liveData.value.sessionId = sessionId;
 
-const chatFrame = useTemplateRef("chat-frame");
+const chatFrame = useTemplateRef<HTMLElement>("chat-frame");
 const videoComp = useTemplateRef<{ $el?: HTMLElement }>("video-comp");
 const player = computed(() => (videoComp.value?.$el?.querySelector<HTMLVideoElement>("video")));
 
@@ -27,11 +27,12 @@ const { width: chatFrameWidth } = useElementSize(chatFrame);
 const { width, height } = useWindowSize();
 
 const mobileVideoSize = computed(() => {
-  if (!isMobile.value) return 80;
+  if (!isMobile.value) return 78;
   const videoHeight = (width.value * 9) / 16;
   const percent = (videoHeight / height.value) * 100;
   return percent;
 });
+
 const mobileChatSize = computed(() => 100 - mobileVideoSize.value);
 
 const onPlay = async () => {
@@ -92,14 +93,24 @@ onMounted(async () => {
   }
   await createWebsocket({ ws, liveData, uuid });
 });
+
+const splitterCard = "items-center justify-center text-muted font-medium";
+const splitterItems = computed<SplitterItem[]>(() => [
+  { slot: "left", minSize: isMobile.value ? mobileVideoSize.value : 40, defaultSize: isMobile.value ? mobileVideoSize.value : 78, class: splitterCard },
+  { slot: "right", minSize: isMobile.value ? mobileChatSize.value : 18, defaultSize: isMobile.value ? mobileChatSize.value : 18, class: splitterCard }
+]);
+const splitterNestedItems = computed<SplitterItem[]>(() => [
+  { slot: "top", class: splitterCard },
+  { slot: "bottom", defaultSize: isMobile.value ? 100 : mobileVideoSize.value, class: splitterCard }
+]);
 </script>
 
 <template>
   <div class="h-dvh bg-black">
     <ClientOnly>
-      <Splitpanes class="h-full" :horizontal="isMobile" :class="{ 'default-theme': !isMobile }">
-        <Pane :size="isMobile ? mobileVideoSize : 80" :min-size="isMobile ? mobileVideoSize : 40">
-          <div class="flex h-full items-center justify-center bg-black flex-col">
+      <USplitter :items="splitterItems" :orientation="isMobile ? 'vertical' : 'horizontal'" class="overflow-hidden" :ui="{ handle: isMobile ? 'data-[orientation=vertical]:h-[0px]' : '' }">
+        <template #left>
+          <div class="flex w-full h-full items-center justify-center bg-black flex-col">
             <div class="group aspect-video w-full relative">
               <div
                 v-if="firstLoad && !playerErrored"
@@ -139,52 +150,30 @@ onMounted(async () => {
               <ChatToggler v-model="chatToggle" class="text-white" />
             </div>
           </div>
-        </Pane>
-        <Pane :size="isMobile ? mobileChatSize : 18" :min-size="isMobile ? mobileChatSize : 18">
-          <Splitpanes horizontal>
-            <template v-if="!isMobile">
-              <Pane :size="23">
-                <div class="h-full">
-                  <iframe
-                    :src="chatToggle === 'twitch' ? embed.twitch.stream : embed.kick.stream"
-                    :width="chatFrameWidth"
-                    frameborder="0"
-                    scrolling="no"
-                    height="100%"
-                    allowfullscreen
-                  />
-                </div>
-              </Pane>
-            </template>
-            <Pane :size="isMobile ? 100 : mobileVideoSize">
-              <div ref="chat-frame" class="relative h-full">
-                <ChatFrame :src="embed.kick.chat" :class="{ hidden: chatToggle === 'twitch' }" />
-                <ChatFrame :src="embed.twitch.chat" :class="{ hidden: chatToggle === 'kick' }" />
-                <div v-if="isMobile" class="flex justify-start w-full gap-2 absolute z-1 top-0 py-2.5 px-2">
-                  <ChatToggler v-model="chatToggle" class="text-white" />
-                  <ChatViewerCount v-if="!playerErrored && liveData.isLive" :count="liveData.viewerCount" />
-                </div>
+        </template>
+        <template #right>
+          <USplitter v-if="!isMobile" :items="splitterNestedItems" orientation="vertical" class="overflow-hidden">
+            <template #top>
+              <div class="w-full h-full">
+                <iframe
+                  :src="chatToggle === 'twitch' ? embed.twitch.stream : embed.kick.stream"
+                  :width="chatFrameWidth"
+                  frameborder="0"
+                  scrolling="no"
+                  height="100%"
+                  allowfullscreen
+                />
               </div>
-            </Pane>
-          </Splitpanes>
-        </Pane>
-      </Splitpanes>
+            </template>
+            <template #bottom>
+              <ChatBox ref="chat-frame" v-model="chatToggle" :is-mobile="isMobile" :player-errored="playerErrored" :live-data="liveData" />
+            </template>
+          </USplitter>
+          <template v-else>
+            <ChatBox ref="chat-frame" v-model="chatToggle" :is-mobile="isMobile" :player-errored="playerErrored" :live-data="liveData" />
+          </template>
+        </template>
+      </USplitter>
     </ClientOnly>
   </div>
 </template>
-
-<style>
-.default-theme.splitpanes--vertical>.splitpanes__splitter, .default-theme .splitpanes--vertical>.splitpanes__splitter,
-.default-theme.splitpanes--horizontal>.splitpanes__splitter, .default-theme .splitpanes--horizontal>.splitpanes__splitter {
-  border: none;
-}
-.default-theme.splitpanes .splitpanes__splitter {
-  background-color: #414141;
-  &:hover, &:active {
-    background-color: #aaaaaa;
-  }
-}
-.default-theme.splitpanes .splitpanes__pane {
-  background: unset;
-}
-</style>
