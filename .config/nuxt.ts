@@ -10,7 +10,6 @@ export default defineNuxtConfig({
     "@nuxt/icon",
     "@nuxtjs/color-mode",
     "@nuxtjs/sitemap",
-    "@nuxthub/core",
     "@nuxt/fonts",
     "nuxt-ui-colors-no-inline",
     "@vue-player/nuxt"
@@ -91,30 +90,14 @@ export default defineNuxtConfig({
     typedPages: true
   },
 
-  compatibilityDate: "2026-03-07",
+  compatibilityDate: "2026-08-22",
 
   nitro: {
     prerender: {
       autoSubfolderIndex: false,
       crawlLinks: false,
       routes: ["/", "/sitemap.xml"]
-    },
-    cloudflare: {
-      pages: {
-        routes: {
-          exclude: ["/images/*"]
-        }
-      }
     }
-  },
-
-  hub: {
-    /*
-    db: {
-      dialect: "sqlite",
-      casing: "snake_case"
-    },
-    */
   },
 
   eslint: {
